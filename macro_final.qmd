@@ -1,0 +1,836 @@
+---
+title: "macro_new2"
+format: html
+editor: visual
+---
+
+```{r}
+# Load required libraries
+library(quantmod)
+library(tseries)
+library(vars)
+library(urca)
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(fredr)
+library(zoo)
+library(strucchange)
+
+# Set FRED API key
+fredr_set_key("5f5f62e513b2afd04c899dc6b409c414")
+
+# ------------------------------------------------------------------------------
+# 1. Load and Transform Data
+
+## BTC
+btc <- read.csv("bitcoin_quarterly_2009_data.csv", stringsAsFactors = FALSE)
+btc <- btc %>%
+  rename_with(~ "BTC_Price", .cols = 2) %>%
+  mutate(Date = as.Date(Date)) %>%
+  arrange(Date) %>%
+  mutate(Date = as.yearqtr(Date)) %>%
+  group_by(Date) %>%
+  summarise(BTC_Price = dplyr::last(BTC_Price)) %>%
+  ungroup() %>%
+  mutate(log_BTC_Price = log(BTC_Price))
+
+## S&P 500
+getSymbols("^GSPC", from = "2009-01-01", src = "yahoo")
+sp500_quarterly_xts <- to.quarterly(GSPC, indexAt = "lastof", drop.time = TRUE)[, 4]
+sp500 <- data.frame(
+  Date = zoo::as.yearqtr(zoo::index(sp500_quarterly_xts)),
+  SP500 = as.numeric(sp500_quarterly_xts)
+) %>%
+  mutate(log_SP500 = log(SP500))
+
+## Real GDP
+gdp <- fredr(series_id = "GDPC1", observation_start = as.Date("2009-01-01")) %>%
+  select(date, value) %>%
+  rename(Real_GDP = value) %>%
+  mutate(Date = as.yearqtr(date)) %>%
+  group_by(Date) %>%
+  summarise(Real_GDP = last(Real_GDP)) %>%
+  ungroup() %>%
+  mutate(log_Real_GDP = log(Real_GDP))
+
+## M2
+m2 <- fredr(series_id = "M2SL", observation_start = as.Date("2009-01-01")) %>%
+  select(date, value) %>%
+  rename(M2 = value) %>%
+  mutate(Date = as.yearqtr(date)) %>%
+  group_by(Date) %>%
+  summarise(M2 = last(M2)) %>%
+  ungroup() %>%
+  mutate(log_M2 = log(M2))
+
+# ------------------------------------------------------------------------------
+# 2. Merge Datasets
+combined_data <- btc %>%
+  full_join(sp500, by = "Date") %>%
+  full_join(gdp, by = "Date") %>%
+  full_join(m2, by = "Date") %>%
+  arrange(Date) %>%
+  drop_na() %>%
+  mutate(Date_Qtr = as.yearqtr(seq(from = as.Date("2009-01-01"), by = "quarter", length.out = n())))
+
+```
+
+# Plot log data
+
+```{r}
+# 3. Plot Time Series
+plot_series <- function(data, var_name) {
+  ggplot(data, aes(x = as.Date(Date), y = .data[[var_name]])) +
+    geom_line(color = "steelblue", linewidth = 1) +
+    labs(title = paste(var_name, "Time Series"), x = "Date", y = var_name) +
+    theme_minimal() +
+    scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+    theme(plot.title = element_text(hjust = 0.5))
+}
+walk(names(combined_data)[-1], ~print(plot_series(combined_data, .x)))
+
+```
+
+# KPSS test
+
+```{r}
+# 4. Stationarity Checks
+kpss_check <- function(series, name) {
+  cat("\n=== KPSS Test for", name, "(Level) ===\n")
+  series <- na.omit(series)
+  test_level <- kpss.test(series, null = "Level")
+  cat("KPSS Statistic:", round(test_level$statistic, 4), "\n")
+  cat("p-value        :", round(test_level$p.value, 4), "\n")
+
+  if (test_level$p.value < 0.05) {
+    cat("Conclusion     : Non-stationary at level\n")
+    diff_series <- diff(series)
+    test_diff <- kpss.test(na.omit(diff_series), null = "Level")
+    cat("\n=== KPSS Test for First Difference of", name, "===\n")
+    cat("KPSS Statistic:", round(test_diff$statistic, 4), "\n")
+    cat("p-value        :", round(test_diff$p.value, 4), "\n")
+    if (test_diff$p.value > 0.05) {
+      cat("Conclusion     : Stationary after differencing\n")
+    } else {
+      cat("Conclusion     : Still non-stationary after differencing\n")
+    }
+  } else {
+    cat("Conclusion     : Stationary at level\n")
+  }
+}
+
+kpss_check(combined_data$log_Real_GDP, "log_Real_GDP")
+kpss_check(combined_data$log_BTC_Price, "log_BTC_Price")
+kpss_check(combined_data$log_SP500, "log_SP500")
+kpss_check(combined_data$log_M2, "log_M2")
+```
+
+## 
+
+```{r}
+
+```
+
+## Engle-Granger Regression + Residuals
+
+```{r}
+engle_model <- lm(log_BTC_Price ~ log_SP500 + log_Real_GDP + log_M2, data = combined_data)
+resid_eg <- residuals(engle_model)
+resid_ts <- ts(resid_eg, start = c(2009, 1), frequency = 4)
+
+```
+
+### Bai-Perron Break Test on Residuals (\~1 means intercept-only model)
+
+```{r}
+bp_eg <- breakpoints(resid_ts ~ 1)
+summary(bp_eg)
+
+# Plot Engle-Granger residuals with breakpoints
+plot(resid_ts, main = "Engle-Granger Residuals with Structural Breaks",
+     ylab = "Residuals", xlab = "Time", col = "black")
+
+# Add fitted break segments (means)
+lines(fitted(bp_eg), col = "red", lwd = 2)
+
+# Add vertical lines at detected break dates
+abline(v = time(resid_ts)[bp_eg$breakpoints], col = "blue", lty = 2)
+
+
+```
+
+Bai-Perron detected breaks at: 2012 Q1 (obs 13) and 2019 Q2 (obs 42) ( 2 structural breaks have lowest BIC 189.51)
+
+## Dummy Variables
+
+-   **`Break_D1`** is a *step dummy* that turns **1 starting at 2012 Q1** and remains **1 for all subsequent periods**.
+
+-   **`Break_D2`** is another *step dummy* that turns **1 starting at 2019 Q2** and remains **1 thereafter**.
+
+After 2019 Q2, **both dummies are 1** because both structural breaks have occurred. This does **not** indicate an error; it reflects that your model accounts for **two distinct breaks** in different time periods/
+
+The "dummy trap" occurs when dummies are **perfectly collinear** (e.g., mutually exclusive categories that sum to 1). In your case:
+
+-   **No Overlap in Activation**:
+
+    -   **`Break_D1`** activates in **2012 Q1** and stays on.
+
+    -   **`Break_D2`** activates in **2019 Q2** and stays on.
+
+    -   There is no period where the dummies overlap *before 2019 Q2*.
+
+-   **Non-Redundant Information**:
+
+    -   The dummies represent **separate structural breaks** (not mutually exclusive categories).
+
+    -   They are **not linearly dependent**: You cannot predict one dummy from the other.
+
+-   **No Dummy Trap**:
+
+    -   The dummies are **not redundant** (e.g., **`Break_D1 ≠ Break_D2`**).
+
+    -   Multicollinearity is not an issue here (they are not perfect linear combinations).
+
+```{r}
+
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+# 7. Create Break Dummies (adjust obs numbers as needed)
+library(zoo)
+combined_data$Break_D1 <- ifelse(combined_data$Date >= as.yearqtr("2012 Q1"), 1, 0)
+combined_data$Break_D2 <- ifelse(combined_data$Date >= as.yearqtr("2019 Q2"), 1, 0)
+
+
+```
+
+```{r}
+# Check dummy variable alignment
+combined_data %>%
+  select(Date, Break_D1, Break_D2) %>%
+  mutate(
+    Break_D1_start = ifelse(Break_D1 == 1 & lag(Break_D1) == 0, "START_D1", NA),
+    Break_D2_start = ifelse(Break_D2 == 1 & lag(Break_D2) == 0, "START_D2", NA)
+  ) %>%
+  print(n = nrow(combined_data))
+```
+
+## Optimal Lag using VAR model with dummies included
+
+```{r}
+# Correct usage of VARselect: only endogenous variables
+log_vars <- ts(combined_data[, c("log_BTC_Price", "log_SP500", "log_Real_GDP", "log_M2")],
+               start = c(2009, 1), frequency = 4)
+
+VARselect(log_vars, lag.max = 6, type = "const")
+
+
+```
+
+# Test for Cointegration (Johansen Test)
+
+```{r}
+library(urca)
+
+# 1. Verify correct time series start date (align with your actual data start)
+# ---------------------------------------------------------------------------
+# Check the first date in your dataset
+first_date <- combined_data$Date[1]
+cat("First date in dataset:", as.character(first_date), "\n")
+
+# Create time series object with PROPER start date (critical for alignment)
+# From your data snapshot, it starts at 2010 Q1 (c(2010, 1))
+log_vars <- ts(combined_data[, c("log_BTC_Price", "log_SP500", "log_Real_GDP", "log_M2")],
+               start = c(2010, 1),  # Adjusted to match your actual data start
+               frequency = 4)
+
+# 2. Convert dummies to MATRIX (required by ca.jo)
+# -----------------------------------------------
+break_dummies <- as.matrix(combined_data[, c("Break_D1", "Break_D2")])
+
+# 3. Johansen test with VERIFIED parameters
+# -----------------------------------------
+johansen_model <- ca.jo(
+  log_vars,
+  type = "trace", 
+  ecdet = "const",
+  K = 2,              # Optimal VAR lag in levels (confirmed correct)
+  dumvar = break_dummies  # Structural break dummies as matrix
+)
+
+# 4. Enhanced summary interpretation
+# ----------------------------------
+summary(johansen_model)
+
+# Critical check: Compare test statistics to critical values
+# (Look for when trace statistic > critical value to determine cointegration rank)
+
+
+```
+
+-   **At 5% significance**:
+
+    -   Reject r=0 , but fail to reject r≤1\
+        ⇒ **Cointegration rank** r=1(one long-run relationship).
+
+<!-- -->
+
+-   **One long-run equilibrium relationships** among BTC, SP500, GDP, and M2. These relationships are stable even **after accounting for structural breaks**
+
+### **Interpretation of Long-Run Relationships**
+
+#### **1. Bitcoin (BTC) vs. S&P 500 (SP500)**
+
+-   **Coefficient**: **-58.82**
+
+    -   A 1% increase in the S&P 500 is associated with a **58.82% decrease** in Bitcoin’s price in the long run.
+
+    -   **Possible Explanation**: Bitcoin may act as a **"risk-off" asset** during periods of equity market growth, inversely correlated with traditional risk assets.
+
+-   <div>
+
+    #### **2. Bitcoin vs. Real GDP**
+
+    </div>
+
+    -   **Coefficient**: **+47.67**
+
+        -   A 1% increase in GDP is linked to a **47.67% increase** in Bitcoin’s price.
+
+        -   **Possible Explanation**: Bitcoin might be perceived as a hedge against economic instability. Strong GDP growth could correlate with increased institutional adoption or speculative interest.
+
+    #### **3. Bitcoin vs. M2 Money Supply**
+
+    -   **Coefficient**: **+123.16**
+
+        -   A 1% increase in M2 money supply corresponds to a **123.16% rise** in Bitcoin’s price.
+
+        -   **Possible Explanation**: Bitcoin may serve as a **hedge against monetary expansion**, with investors flocking to it during periods of loose monetary policy to preserve value.
+
+-   **Equity Markets**: Bitcoin’s inverse relationship with the S&P 500 implies it may diversify portfolios during equity rallies.
+
+-   **Monetary Policy**: The strong positive link to M2 highlights Bitcoin’s role as a potential **"digital gold"** during quantitative easing or inflationary periods.
+
+-   **Economic Growth**: The GDP coefficient may reflect speculative demand during expansions or hedging during contractions.
+
+## **Cointegration Equations (Long-Run Equilibrium):**
+
+1.  Based on the first eigenvector (for rank r=1):
+
+    log_BTC_Price=−58.82⋅log_SP500+47.67⋅log_Real_GDP+123.16⋅log_M2−1177.77
+
+## **Short-Run Dynamics.** VECM with r = 1
+
+```{r}
+vecm_model <- cajorls(johansen_model, r = 1)
+summary(vecm_model$rlm)
+
+
+```
+
+### Equation 1: Δlog_BTC_Price
+
+Δlog_BTC_Price = 3.79 × Δlog_SP500
+
+In the short run, a 1% increase in S&P 500 returns leads to a **3.79% increase in BTC returns**, suggesting some **positive co-movement** in the short-run, despite long-run substitution.
+
+### Equation 2: Δlog_SP500
+
+Δlog_SP500 = -0.26 × Δlog_SP500 + 1.43 × Δlog_M2
+
+F stat is not signifficant
+
+-   It may suggest that **S&P500 is exogenous** in your system — **not responding** to short-run fluctuations in BTC, GDP, or M2.
+
+-   However, if **BTC or GDP** respond to **changes in SP500**, that makes **SP500 a key influencing variable** — but not one that reacts to others in the short term.
+
+### Equation 3: Δlog_Real_GDP
+
+Δlog_Real_GDP = -0.00065 × ECT1 − 0.014 × Break_D2 + 0.076 × Δlog_SP500 + 0.27 × Δlog_M2
+
+-   GDP adjusts **back to long-run equilibrium** (cointegration) when it diverges (significant ECT).
+
+<!-- -->
+
+-   Break_D2 likely captures a **downward shock** (e.g. COVID or 2019–2020).
+
+<!-- -->
+
+-   GDP increases with SP500 returns and money supply in the short term.
+
+### Equation 4: Δlog_M2
+
+Δlog_M2 = 0.001 × ECT1 + 0.023 × Break_D2 − 0.053 × Δlog_SP500 + 0.52 × Δlog_M2
+
+-   M2 **adjusts back to equilibrium** (strong loading on ECT1).
+
+<!-- -->
+
+-   Sharp **structural breaks (Break_D2)** likely reflect central bank monetary responses.
+
+<!-- -->
+
+-   Past M2 predicts current M2 (strong autoregressive effect).
+
+-   The system has **1 cointegrating relationship**, and **multiple short-run linkages**.
+
+<!-- -->
+
+-   **BTC** reacts to SP500 in short-run; **SP500** is influenced by M2.
+
+<!-- -->
+
+-   **GDP** is strongly tied to SP500 and M2 in the short-run, and **adjusts to the long-run error correction term**.
+
+<!-- -->
+
+-   **M2** plays a major role, with strong autoregression and reaction to structural breaks.
+
+### Residuals check (heteroskedastisity)
+
+```{r}
+arch.test(vec2var(johansen_model, r = 1), lags.multi = 5)
+
+```
+
+**Model does not show heteroskedasticity** in the error terms.
+
+```{r}
+
+```
+
+# Granger Causality
+
+```{r}
+# Create a VAR model with the selected lag (e.g., p = 2)
+var_model <- VAR(
+  y = combined_data[, c("log_BTC_Price", "log_SP500", "log_Real_GDP", "log_M2")],
+  p = 2,              # use the same lag as your VECM K
+  type = "const",     
+  exogen = as.matrix(combined_data[, c("Break_D1", "Break_D2")])
+)
+variables <- c("log_BTC_Price", "log_SP500", "log_Real_GDP", "log_M2")
+
+# Loop through each pair for Granger causality
+for (cause_var in variables) {
+  for (effect_var in variables) {
+    if (cause_var != effect_var) {
+      cat("\n================================================\n")
+      cat("Testing if", cause_var, "Granger-causes", effect_var, "\n")
+      cat("================================================\n")
+      
+      result <- causality(var_model, cause = cause_var)
+      print(result$Granger)
+    }
+  }
+}
+
+
+```
+
+-   The **Granger causality tests** reveal the following short-run predictive dynamics (at 5% level):
+
+    -   **S&P500 Granger-causes BTC, Real GDP, and M2**: This suggests that stock market movements serve as a **leading indicator** for both cryptocurrency and broader macroeconomic variables.
+
+    ```         
+    **M2 Granger-causes BTC, Real GDP, and SP500**: This is consistent with the role of **monetary policy in driving liquidity and expectations** in financial and macroeconomic environments.
+
+    **BTC does not Granger-cause any of the other variables**, indicating that Bitcoin behaves more like a **follower** or **reactive asset** in this macro-financial framework.
+
+    **Real GDP shows no significant predictive power**, although it is marginal in some tests.
+    ```
+
+# 2 part
+
+### Bivariate cointegration between BTC and each country's GDP
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(tseries)
+
+# 1. Load the data
+gdp_all_countries <- read_csv('GDP_all_countries.csv')
+
+# 2. Convert Date column if needed
+gdp_all_countries <- gdp_all_countries %>%
+  mutate(Date = as.Date(Date))
+
+# 3. Drop GDP_US (excluded from this analysis)
+gdp_data <- gdp_all_countries %>% select(-GDP_US)
+
+# 4. Take log of all GDP columns (except Date)
+gdp_logged <- gdp_data %>%
+  mutate(across(starts_with("GDP_"), log))
+
+# 5. Reshape to long format for plotting
+gdp_long_log <- gdp_logged %>%
+  pivot_longer(
+    cols = starts_with("GDP_"),
+    names_to = "Country",
+    values_to = "log_GDP"
+  )
+
+# 6. Plot logged GDP by country
+ggplot(gdp_long_log, aes(x = Date, y = log_GDP)) +
+  geom_line(color = "steelblue", linewidth = 1) +
+  facet_wrap(~ Country, scales = "free_y") +
+  labs(title = "Log of Quarterly GDP by Country",
+       x = "Date", y = "Log(GDP)") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+```{r}
+# 7. KPSS Test Function
+kpss_check <- function(series, name) {
+  cat("\n===============================\n")
+  cat("KPSS Test for", name, "(Level)\n")
+  cat("===============================\n")
+  
+  test_level <- kpss.test(na.omit(series), null = "Level")
+  cat("KPSS Statistic:", round(test_level$statistic, 4), "\n")
+  cat("p-value        :", round(test_level$p.value, 4), "\n")
+  
+  if (test_level$p.value < 0.05) {
+    cat("Conclusion     : ❌ Non-stationary at level\n")
+    
+    diff_series <- diff(series)
+    test_diff <- kpss.test(na.omit(diff_series), null = "Level")
+    cat("\nKPSS Test for First Difference of", name, "\n")
+    cat("KPSS Statistic:", round(test_diff$statistic, 4), "\n")
+    cat("p-value        :", round(test_diff$p.value, 4), "\n")
+    
+    if (test_diff$p.value > 0.05) {
+      cat("Conclusion     : ✅ Stationary after differencing\n")
+    } else {
+      cat("Conclusion     : ❌ Still non-stationary after differencing\n")
+    }
+  } else {
+    cat("Conclusion     : ✅ Stationary at level\n")
+  }
+}
+
+# 8. Apply KPSS Test to All Logged Series
+log_gdp_only <- gdp_logged %>% select(-Date)
+for (col in colnames(log_gdp_only)) {
+  kpss_check(log_gdp_only[[col]], col)
+}
+```
+
+```{r}
+library(zoo)  # for as.yearqtr
+
+# Convert Date to year-quarter if needed
+gdp_logged <- gdp_logged %>% mutate(Date = as.yearqtr(Date))
+
+# Also convert Date in combined_data (to align with gdp_logged)
+combined_data <- combined_data %>% mutate(Date = as.yearqtr(Date))
+
+# Join with Japanese GDP
+btc_gdp_japan <- combined_data %>%
+  select(Date, log_BTC_Price) %>%
+  left_join(gdp_logged %>% select(Date, log_GDP_JP = GDP_JP), by = "Date") %>%
+  select(Date, log_BTC_Price, log_GDP_JP)
+
+# Join with El Salvador GDP
+btc_gdp_elsalvador <- combined_data %>%
+  select(Date, log_BTC_Price) %>%
+  left_join(gdp_logged %>% select(Date, log_GDP_ElSalvador = GDP_SV), by = "Date") %>%
+  select(Date, log_BTC_Price, log_GDP_ElSalvador)
+
+
+
+```
+
+### Engle-Granger (Japan and BTC)
+
+```{r}
+eg_model_japan <- lm(log_BTC_Price ~ log_GDP_JP, data = btc_gdp_japan)
+resid_eg_japan <- residuals(eg_model_japan)
+resid_ts_japan <- ts(resid_eg_japan, start = c(2009, 1), frequency = 4)
+
+```
+
+### Bai-Perron Breakpoint Test on Residuals
+
+```{r}
+library(strucchange)
+
+bp_japan <- breakpoints(resid_ts_japan ~ 1)
+summary(bp_japan)
+breakpoints(bp_japan)  # will return location of breaks
+```
+
+```{r}
+plot(resid_ts_japan, main = "BTC ~ Japan GDP Residuals (Engle-Granger)")
+lines(fitted(bp_japan), col = "red", lwd = 2)
+abline(v = time(resid_ts_japan)[bp_japan$breakpoints], col = "blue", lty = 2)
+```
+
+### Dummy variables
+
+```{r}
+colnames(btc_gdp_japan)
+
+
+
+```
+
+```{r}
+library(zoo)
+
+btc_gdp_japan$Date <- as.yearqtr(btc_gdp_japan$Date)
+btc_gdp_japan$Break_D1 <- ifelse(btc_gdp_japan$Date >= as.yearqtr("2016 Q2"), 1, 0)
+btc_gdp_japan$Break_D2 <- ifelse(btc_gdp_japan$Date >= as.yearqtr("2021 Q1"), 1, 0)
+
+btc_gdp_japan %>%
+  filter(Break_D1 == 1 | Break_D2 == 1) %>%
+  select(Date, Break_D1, Break_D2) %>%
+  head(20)
+
+
+
+```
+
+### Re-estimate Cointegration with Break Dummies
+
+```{r}
+eg_model_breaks <- lm(log_BTC_Price ~ log_GDP_JP + Break_D1, data = btc_gdp_japan)
+
+resid_adj <- residuals(eg_model_breaks)
+```
+
+```{r}
+summary(eg_model_breaks)
+
+```
+
+#### Cointegration Equation
+
+log(BTC_Price)t​=81.978−10.961⋅log(GDP_JP)t​+4.419⋅Break_D1t​+εt​​
+
+-   **Intercept (81.978):**
+
+    -   This represents the baseline log-BTC price when Japan's GDP is at 1 (which is theoretical in log terms) and before the structural break occurred (Break_D1 = 0).
+
+        It helps anchor the regression line but is not directly interpretable economically.\\
+
+    -   **log(GDP_JP) Coefficient (−10.961):**
+
+    For every **1% increase in Japan’s GDP**, the **log of Bitcoin price decreases by \~10.96%**, holding everything else constant.
+
+    This negative relationship suggests **Bitcoin and Japanese economic performance may be substitutes** in this time frame. Investors might shift toward BTC when macroeconomic conditions worsen.
+
+<!-- -->
+
+-   **Break_D1 Coefficient (+4.419)**
+
+```         
+-   After **2012 Q1**, Bitcoin’s log price increased **permanently by about 4.42 units**, controlling for GDP.
+
+    This implies a **structural shift** in BTC pricing dynamics starting from that quarter. It may reflect a macroeconomic regime change, financial innovation, or growing BTC adoption.
+```
+
+### Run Unit Root Test on Adjusted Residuals (Engle-Granger)
+
+```{r}
+library(urca)
+adf_result <- ur.df(resid_adj, type = "none", selectlags = "AIC")
+summary(adf_result)
+```
+
+Since test statistic (−3.7123) \< all critical values, you reject the null hypothesis of a unit root in the residuals. The residuals are stationary, so there is cointegration between Bitcoin and Japan's GDP, even after accounting for structural breaks (2016 Q2 and 2021 Q1).
+
+### Granger Causality
+
+```{r}
+# Load required libraries
+library(vars)
+library(lmtest)
+library(dplyr)
+
+# Step 1: Prepare time series data
+granger_data <- btc_gdp_japan %>%
+  select(log_BTC_Price, log_GDP_JP) %>%
+  na.omit()
+
+# Step 2: Convert to time series object (adjust start if needed)
+granger_ts <- ts(granger_data, frequency = 4, start = c(2009, 1))
+
+# Step 3: Use VARselect to choose optimal lag length
+lag_selection <- VARselect(granger_ts, lag.max = 6, type = "const")
+print(lag_selection$selection)
+
+# Step 4: Use the lag chosen by AIC
+optimal_lag <- lag_selection$selection["AIC(n)"]
+
+# Step 5: Run Granger causality tests with optimal lag
+gdp_causes_btc <- grangertest(log_BTC_Price ~ log_GDP_JP,
+                              order = optimal_lag, data = granger_data)
+
+btc_causes_gdp <- grangertest(log_GDP_JP ~ log_BTC_Price,
+                              order = optimal_lag, data = granger_data)
+
+# Step 6: Print results
+cat("Granger Causality Tests (Lag =", optimal_lag, ")\n")
+cat("===============================================\n")
+
+cat("\nNull Hypothesis: GDP does NOT Granger-cause BTC\n")
+cat("F-statistic :", round(gdp_causes_btc$F[2], 3), "\n")
+cat("p-value     :", round(gdp_causes_btc$`Pr(>F)`[2], 4), "\n\n")
+
+cat("Null Hypothesis: BTC does NOT Granger-cause GDP\n")
+cat("F-statistic :", round(btc_causes_gdp$F[2], 3), "\n")
+cat("p-value     :", round(btc_causes_gdp$`Pr(>F)`[2], 4), "\n")
+
+
+```
+
+*Bitcoin → GDP* (Granger-causal)\
+
+*GDP → Bitcoin* (not Granger-causal)
+
+Bitcoin may act as a **leading indicator** or **shock transmitter** to GDP in Japan.\
+However, this is **not structural causality** — it shows a **statistical precedence** that may warrant deeper economic or policy analysis.
+
+## BTC and El Salvador
+
+```{r}
+# Load necessary libraries
+library(strucchange)
+library(zoo)
+library(urca)
+library(dplyr)
+
+# Step 1: Run Engle-Granger regression
+eg_model_sv <- lm(log_BTC_Price ~ log_GDP_ElSalvador, data = btc_gdp_elsalvador)
+summary(eg_model_sv)
+
+# Step 2: Extract residuals and convert to time series
+resid_eg_sv <- residuals(eg_model_sv)
+resid_ts_sv <- ts(resid_eg_sv, start = c(2009, 1), frequency = 4)
+
+# Step 3: Detect structural breaks in residuals
+bp_sv <- breakpoints(resid_ts_sv ~ 1)
+summary(bp_sv)  # Shows optimal breaks & BIC
+
+```
+
+Final Cointegration Equation (El Salvador case)
+
+log(BTCt​)=−100.985+33.821⋅log(GDPElSalvador,t​)+εt
+
+> A **1% increase in El Salvador's GDP** is associated with approximately a **33.82% increase in Bitcoin price** in the long run, assuming cointegration holds.
+>
+> -   You have **high R² (0.7778)**, and **both coefficients are highly significant**.
+>
+>     After testing the **residuals for stationarity** (ADF), you confirmed:
+>
+>     **Residuals are stationary** ⇒ ✅ You have **cointegration** between BTC and GDP of El Salvador (this step is checked later)
+
+​
+
+```{r}
+# Step 4: Visualize breakpoints
+plot(resid_ts_sv, main = "BTC ~ El Salvador GDP Residuals with Breakpoints")
+lines(fitted(bp_sv), col = "red", lwd = 2)
+abline(v = time(resid_ts_sv)[bp_sv$breakpoints], col = "blue", lty = 2)
+
+
+```
+
+```{r}
+# Step 5: Create dummy variables for selected break dates
+# Based on your summary: breaks at 2012 Q1 (obs 13) and 2021 Q2 (obs 50)
+btc_gdp_elsalvador$Date <- as.yearqtr(btc_gdp_elsalvador$Date)
+btc_gdp_elsalvador$Break_D1 <- ifelse(btc_gdp_elsalvador$Date >= as.yearqtr("2012 Q1"), 1, 0)
+btc_gdp_elsalvador$Break_D2 <- ifelse(btc_gdp_elsalvador$Date >= as.yearqtr("2021 Q2"), 1, 0)
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+btc_gdp_elsalvador %>%
+  filter(Date >= as.yearqtr("2011 Q4") & Date <= as.yearqtr("2012 Q2")) %>%
+  select(Date, Break_D1, Break_D2)
+
+```
+
+```{r}
+btc_gdp_elsalvador %>%
+  filter(Date >= as.yearqtr("2021 Q1") & Date <= as.yearqtr("2021 Q3")) %>%
+  select(Date, Break_D1, Break_D2)
+
+```
+
+```{r}
+# Re-estimate cointegration including structural break dummy
+eg_model_sv_adj <- lm(log_BTC_Price ~ log_GDP_ElSalvador + Break_D1, data = btc_gdp_elsalvador)
+summary(eg_model_sv_adj)
+
+# Extract adjusted residuals
+resid_adj_sv <- residuals(eg_model_sv_adj)
+
+
+
+```
+
+```{r}
+library(urca)
+
+# ADF test on residuals (Engle-Granger second step)
+adf_test_sv <- ur.df(resid_adj_sv, type = "none", selectlags = "AIC")
+summary(adf_test_sv)
+
+
+```
+
+The residuals from the Engle-Granger regression (with structural break dummy) are **stationary**, which confirms a **long-run cointegration relationship**
+
+Granger causality
+
+```{r}
+# Prepare again the VAR-compatible dataset
+granger_data_sv <- btc_gdp_elsalvador %>%
+  select(log_BTC_Price, log_GDP_ElSalvador) %>%
+  na.omit()
+
+optimal_lag_vecm <- VARselect(combined_data[, c("log_BTC_Price", "log_SP500", "log_Real_GDP", "log_M2")], lag.max = 10, type = "const")$selection["AIC(n)"]
+
+# Run Granger causality tests
+granger_btc_causes_gdp <- grangertest(log_GDP_ElSalvador ~ log_BTC_Price,
+                                      order = optimal_lag_vecm, data = granger_data_sv)
+
+granger_gdp_causes_btc <- grangertest(log_BTC_Price ~ log_GDP_ElSalvador,
+                                      order = optimal_lag_vecm, data = granger_data_sv)
+
+# Print results
+cat("\nGranger Causality Results (El Salvador):\n")
+cat("BTC ➡ GDP: F =", round(granger_btc_causes_gdp$F[2], 3), ", p =", round(granger_btc_causes_gdp$`Pr(>F)`[2], 4), "\n")
+cat("GDP ➡ BTC: F =", round(granger_gdp_causes_btc$F[2], 3), ", p =", round(granger_gdp_causes_btc$`Pr(>F)`[2], 4), "\n")
+
+
+
+```
+
+Past values of Bitcoin contain useful information to explain or anticipate changes in El Salvador’s GDP in the short run.
+
+Past values of El Salvador’s GDP do **not significantly help** explain Bitcoin price dynamics.

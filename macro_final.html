@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>macro_new2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="macro_final_files/libs/clipboard/clipboard.min.js"></script>
+<script src="macro_final_files/libs/quarto-html/quarto.js"></script>
+<script src="macro_final_files/libs/quarto-html/popper.min.js"></script>
+<script src="macro_final_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="macro_final_files/libs/quarto-html/anchor.min.js"></script>
+<link href="macro_final_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="macro_final_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="macro_final_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="macro_final_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="macro_final_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">macro_new2</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(quantmod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: xts</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: zoo</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'zoo'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: TTR</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: MASS</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: strucchange</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: sandwich</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: urca</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: lmtest</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(urca)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+######################### Warning from 'xts' package ##########################
+#                                                                             #
+# The dplyr lag() function breaks how base R's lag() function is supposed to  #
+# work, which breaks lag(my_xts). Calls to lag(my_xts) that you type or       #
+# source() into this session won't work correctly.                            #
+#                                                                             #
+# Use stats::lag() to make sure you're not using dplyr::lag(), or you can add #
+# conflictRules('dplyr', exclude = 'lag') to your .Rprofile to stop           #
+# dplyr from breaking base R's lag() function.                                #
+#                                                                             #
+# Code in packages is not affected. It's protected by R's namespace mechanism #
+# Set `options(xts.warn_dplyr_breaks_lag = FALSE)` to suppress this warning.  #
+#                                                                             #
+###############################################################################</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:MASS':
+
+    select</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:xts':
+
+    first, last</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ lubridate 1.9.3     ✔ tibble    3.2.1
+✔ purrr     1.0.2     ✔ tidyr     1.3.1
+✔ readr     2.1.5     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ stringr::boundary() masks strucchange::boundary()
+✖ dplyr::filter()     masks stats::filter()
+✖ dplyr::first()      masks xts::first()
+✖ dplyr::lag()        masks stats::lag()
+✖ dplyr::last()       masks xts::last()
+✖ dplyr::select()     masks MASS::select()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fredr)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(strucchange)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Set FRED API key</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">fredr_set_key</span>(<span class="st">"5f5f62e513b2afd04c899dc6b409c414"</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------------------</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Load and Transform Data</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="do">## BTC</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>btc <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"bitcoin_quarterly_2009_data.csv"</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>btc <span class="ot">&lt;-</span> btc <span class="sc">%&gt;%</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span> <span class="st">"BTC_Price"</span>, <span class="at">.cols =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">as.Date</span>(Date)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">as.yearqtr</span>(Date)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">BTC_Price =</span> dplyr<span class="sc">::</span><span class="fu">last</span>(BTC_Price)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">log_BTC_Price =</span> <span class="fu">log</span>(BTC_Price))</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="do">## S&amp;P 500</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a><span class="fu">getSymbols</span>(<span class="st">"^GSPC"</span>, <span class="at">from =</span> <span class="st">"2009-01-01"</span>, <span class="at">src =</span> <span class="st">"yahoo"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "GSPC"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>sp500_quarterly_xts <span class="ot">&lt;-</span> <span class="fu">to.quarterly</span>(GSPC, <span class="at">indexAt =</span> <span class="st">"lastof"</span>, <span class="at">drop.time =</span> <span class="cn">TRUE</span>)[, <span class="dv">4</span>]</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>sp500 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Date =</span> zoo<span class="sc">::</span><span class="fu">as.yearqtr</span>(zoo<span class="sc">::</span><span class="fu">index</span>(sp500_quarterly_xts)),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">SP500 =</span> <span class="fu">as.numeric</span>(sp500_quarterly_xts)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">log_SP500 =</span> <span class="fu">log</span>(SP500))</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Real GDP</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>gdp <span class="ot">&lt;-</span> <span class="fu">fredr</span>(<span class="at">series_id =</span> <span class="st">"GDPC1"</span>, <span class="at">observation_start =</span> <span class="fu">as.Date</span>(<span class="st">"2009-01-01"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Real_GDP =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">as.yearqtr</span>(date)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Real_GDP =</span> <span class="fu">last</span>(Real_GDP)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">log_Real_GDP =</span> <span class="fu">log</span>(Real_GDP))</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="do">## M2</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">fredr</span>(<span class="at">series_id =</span> <span class="st">"M2SL"</span>, <span class="at">observation_start =</span> <span class="fu">as.Date</span>(<span class="st">"2009-01-01"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">M2 =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">as.yearqtr</span>(date)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">M2 =</span> <span class="fu">last</span>(M2)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">log_M2 =</span> <span class="fu">log</span>(M2))</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------------------</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Merge Datasets</span></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> btc <span class="sc">%&gt;%</span></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(sp500, <span class="at">by =</span> <span class="st">"Date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(gdp, <span class="at">by =</span> <span class="st">"Date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(m2, <span class="at">by =</span> <span class="st">"Date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Date_Qtr =</span> <span class="fu">as.yearqtr</span>(<span class="fu">seq</span>(<span class="at">from =</span> <span class="fu">as.Date</span>(<span class="st">"2009-01-01"</span>), <span class="at">by =</span> <span class="st">"quarter"</span>, <span class="at">length.out =</span> <span class="fu">n</span>())))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="plot-log-data" class="level1">
+<h1>Plot log data</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Plot Time Series</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>plot_series <span class="ot">&lt;-</span> <span class="cf">function</span>(data, var_name) {</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">as.Date</span>(Date), <span class="at">y =</span> .data[[var_name]])) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(var_name, <span class="st">"Time Series"</span>), <span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> var_name) <span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"2 years"</span>, <span class="at">date_labels =</span> <span class="st">"%Y"</span>) <span class="sc">+</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(<span class="fu">names</span>(combined_data)[<span class="sc">-</span><span class="dv">1</span>], <span class="sc">~</span><span class="fu">print</span>(<span class="fu">plot_series</span>(combined_data, .x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-6.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-7.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-8.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `trans` argument of `continuous_scale()` is deprecated as of ggplot2 3.5.0.
+ℹ Please use the `transform` argument instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-2-9.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="kpss-test" class="level1">
+<h1>KPSS test</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Stationarity Checks</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>kpss_check <span class="ot">&lt;-</span> <span class="cf">function</span>(series, name) {</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=== KPSS Test for"</span>, name, <span class="st">"(Level) ===</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  series <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(series)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  test_level <span class="ot">&lt;-</span> <span class="fu">kpss.test</span>(series, <span class="at">null =</span> <span class="st">"Level"</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"KPSS Statistic:"</span>, <span class="fu">round</span>(test_level<span class="sc">$</span>statistic, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"p-value        :"</span>, <span class="fu">round</span>(test_level<span class="sc">$</span>p.value, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (test_level<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>) {</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Conclusion     : Non-stationary at level</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    diff_series <span class="ot">&lt;-</span> <span class="fu">diff</span>(series)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    test_diff <span class="ot">&lt;-</span> <span class="fu">kpss.test</span>(<span class="fu">na.omit</span>(diff_series), <span class="at">null =</span> <span class="st">"Level"</span>)</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=== KPSS Test for First Difference of"</span>, name, <span class="st">"===</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"KPSS Statistic:"</span>, <span class="fu">round</span>(test_diff<span class="sc">$</span>statistic, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"p-value        :"</span>, <span class="fu">round</span>(test_diff<span class="sc">$</span>p.value, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (test_diff<span class="sc">$</span>p.value <span class="sc">&gt;</span> <span class="fl">0.05</span>) {</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Conclusion     : Stationary after differencing</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Conclusion     : Still non-stationary after differencing</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Conclusion     : Stationary at level</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="fu">kpss_check</span>(combined_data<span class="sc">$</span>log_Real_GDP, <span class="st">"log_Real_GDP"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== KPSS Test for log_Real_GDP (Level) ===</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(series, null = "Level"): p-value smaller than printed
+p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KPSS Statistic: 1.6042 
+p-value        : 0.01 
+Conclusion     : Non-stationary at level</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(diff_series), null = "Level"): p-value greater
+than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== KPSS Test for First Difference of log_Real_GDP ===
+KPSS Statistic: 0.0355 
+p-value        : 0.1 
+Conclusion     : Stationary after differencing</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kpss_check</span>(combined_data<span class="sc">$</span>log_BTC_Price, <span class="st">"log_BTC_Price"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== KPSS Test for log_BTC_Price (Level) ===</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(series, null = "Level"): p-value smaller than printed
+p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KPSS Statistic: 1.463 
+p-value        : 0.01 
+Conclusion     : Non-stationary at level</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(diff_series), null = "Level"): p-value greater
+than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== KPSS Test for First Difference of log_BTC_Price ===
+KPSS Statistic: 0.333 
+p-value        : 0.1 
+Conclusion     : Stationary after differencing</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kpss_check</span>(combined_data<span class="sc">$</span>log_SP500, <span class="st">"log_SP500"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== KPSS Test for log_SP500 (Level) ===</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(series, null = "Level"): p-value smaller than printed
+p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KPSS Statistic: 1.5936 
+p-value        : 0.01 
+Conclusion     : Non-stationary at level</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(diff_series), null = "Level"): p-value greater
+than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== KPSS Test for First Difference of log_SP500 ===
+KPSS Statistic: 0.0322 
+p-value        : 0.1 
+Conclusion     : Stationary after differencing</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kpss_check</span>(combined_data<span class="sc">$</span>log_M2, <span class="st">"log_M2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== KPSS Test for log_M2 (Level) ===</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(series, null = "Level"): p-value smaller than printed
+p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KPSS Statistic: 1.5869 
+p-value        : 0.01 
+Conclusion     : Non-stationary at level</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(diff_series), null = "Level"): p-value greater
+than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== KPSS Test for First Difference of log_M2 ===
+KPSS Statistic: 0.1195 
+p-value        : 0.1 
+Conclusion     : Stationary after differencing</code></pre>
+</div>
+</div>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
+</section>
+<section id="engle-granger-regression-residuals" class="level2">
+<h2 class="anchored" data-anchor-id="engle-granger-regression-residuals">Engle-Granger Regression + Residuals</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>engle_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_BTC_Price <span class="sc">~</span> log_SP500 <span class="sc">+</span> log_Real_GDP <span class="sc">+</span> log_M2, <span class="at">data =</span> combined_data)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>resid_eg <span class="ot">&lt;-</span> <span class="fu">residuals</span>(engle_model)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>resid_ts <span class="ot">&lt;-</span> <span class="fu">ts</span>(resid_eg, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2009</span>, <span class="dv">1</span>), <span class="at">frequency =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="bai-perron-break-test-on-residuals-1-means-intercept-only-model" class="level3">
+<h3 class="anchored" data-anchor-id="bai-perron-break-test-on-residuals-1-means-intercept-only-model">Bai-Perron Break Test on Residuals (~1 means intercept-only model)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>bp_eg <span class="ot">&lt;-</span> <span class="fu">breakpoints</span>(resid_ts <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bp_eg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Optimal (m+1)-segment partition: 
+
+Call:
+breakpoints.formula(formula = resid_ts ~ 1)
+
+Breakpoints at observation number:
+                      
+m = 1   9             
+m = 2   13       42   
+m = 3   13       41 52
+m = 4   11    30 41 52
+m = 5   13 22 31 41 52
+
+Corresponding to breakdates:
+                                               
+m = 1   2011(1)                                
+m = 2   2012(1)                 2019(2)        
+m = 3   2012(1)                 2019(1) 2021(4)
+m = 4   2011(3)         2016(2) 2019(1) 2021(4)
+m = 5   2012(1) 2014(2) 2016(3) 2019(1) 2021(4)
+
+Fit:
+                                             
+m   0      1      2      3      4      5     
+RSS 121.17  87.42  51.70  46.84  45.70  44.74
+BIC 223.20 211.50 187.69 189.88 196.61 203.53</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Engle-Granger residuals with breakpoints</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(resid_ts, <span class="at">main =</span> <span class="st">"Engle-Granger Residuals with Structural Breaks"</span>,</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Residuals"</span>, <span class="at">xlab =</span> <span class="st">"Time"</span>, <span class="at">col =</span> <span class="st">"black"</span>)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Add fitted break segments (means)</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">fitted</span>(bp_eg), <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Add vertical lines at detected break dates</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">time</span>(resid_ts)[bp_eg<span class="sc">$</span>breakpoints], <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Bai-Perron detected breaks at: 2012 Q1 (obs 13) and 2019 Q2 (obs 42) ( 2 structural breaks have lowest BIC 189.51)</p>
+</section>
+</section>
+<section id="dummy-variables" class="level2">
+<h2 class="anchored" data-anchor-id="dummy-variables">Dummy Variables</h2>
+<ul>
+<li><p><strong><code>Break_D1</code></strong> is a <em>step dummy</em> that turns <strong>1 starting at 2012 Q1</strong> and remains <strong>1 for all subsequent periods</strong>.</p></li>
+<li><p><strong><code>Break_D2</code></strong> is another <em>step dummy</em> that turns <strong>1 starting at 2019 Q2</strong> and remains <strong>1 thereafter</strong>.</p></li>
+</ul>
+<p>After 2019 Q2, <strong>both dummies are 1</strong> because both structural breaks have occurred. This does <strong>not</strong> indicate an error; it reflects that your model accounts for <strong>two distinct breaks</strong> in different time periods/</p>
+<p>The “dummy trap” occurs when dummies are <strong>perfectly collinear</strong> (e.g., mutually exclusive categories that sum to 1). In your case:</p>
+<ul>
+<li><p><strong>No Overlap in Activation</strong>:</p>
+<ul>
+<li><p><strong><code>Break_D1</code></strong> activates in <strong>2012 Q1</strong> and stays on.</p></li>
+<li><p><strong><code>Break_D2</code></strong> activates in <strong>2019 Q2</strong> and stays on.</p></li>
+<li><p>There is no period where the dummies overlap <em>before 2019 Q2</em>.</p></li>
+</ul></li>
+<li><p><strong>Non-Redundant Information</strong>:</p>
+<ul>
+<li><p>The dummies represent <strong>separate structural breaks</strong> (not mutually exclusive categories).</p></li>
+<li><p>They are <strong>not linearly dependent</strong>: You cannot predict one dummy from the other.</p></li>
+</ul></li>
+<li><p><strong>No Dummy Trap</strong>:</p>
+<ul>
+<li><p>The dummies are <strong>not redundant</strong> (e.g., <strong><code>Break_D1 ≠ Break_D2</code></strong>).</p></li>
+<li><p>Multicollinearity is not an issue here (they are not perfect linear combinations).</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. Create Break Dummies (adjust obs numbers as needed)</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>combined_data<span class="sc">$</span>Break_D1 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(combined_data<span class="sc">$</span>Date <span class="sc">&gt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2012 Q1"</span>), <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>combined_data<span class="sc">$</span>Break_D2 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(combined_data<span class="sc">$</span>Date <span class="sc">&gt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2019 Q2"</span>), <span class="dv">1</span>, <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check dummy variable alignment</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>combined_data <span class="sc">%&gt;%</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Date, Break_D1, Break_D2) <span class="sc">%&gt;%</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Break_D1_start =</span> <span class="fu">ifelse</span>(Break_D1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="fu">lag</span>(Break_D1) <span class="sc">==</span> <span class="dv">0</span>, <span class="st">"START_D1"</span>, <span class="cn">NA</span>),</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Break_D2_start =</span> <span class="fu">ifelse</span>(Break_D2 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> <span class="fu">lag</span>(Break_D2) <span class="sc">==</span> <span class="dv">0</span>, <span class="st">"START_D2"</span>, <span class="cn">NA</span>)</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="fu">nrow</span>(combined_data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 61 × 5
+   Date      Break_D1 Break_D2 Break_D1_start Break_D2_start
+   &lt;yearqtr&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;          &lt;chr&gt;         
+ 1 2010 Q1          0        0 &lt;NA&gt;           &lt;NA&gt;          
+ 2 2010 Q2          0        0 &lt;NA&gt;           &lt;NA&gt;          
+ 3 2010 Q3          0        0 &lt;NA&gt;           &lt;NA&gt;          
+ 4 2010 Q4          0        0 &lt;NA&gt;           &lt;NA&gt;          
+ 5 2011 Q1          0        0 &lt;NA&gt;           &lt;NA&gt;          
+ 6 2011 Q2          0        0 &lt;NA&gt;           &lt;NA&gt;          
+ 7 2011 Q3          0        0 &lt;NA&gt;           &lt;NA&gt;          
+ 8 2011 Q4          0        0 &lt;NA&gt;           &lt;NA&gt;          
+ 9 2012 Q1          1        0 START_D1       &lt;NA&gt;          
+10 2012 Q2          1        0 &lt;NA&gt;           &lt;NA&gt;          
+11 2012 Q3          1        0 &lt;NA&gt;           &lt;NA&gt;          
+12 2012 Q4          1        0 &lt;NA&gt;           &lt;NA&gt;          
+13 2013 Q1          1        0 &lt;NA&gt;           &lt;NA&gt;          
+14 2013 Q2          1        0 &lt;NA&gt;           &lt;NA&gt;          
+15 2013 Q3          1        0 &lt;NA&gt;           &lt;NA&gt;          
+16 2013 Q4          1        0 &lt;NA&gt;           &lt;NA&gt;          
+17 2014 Q1          1        0 &lt;NA&gt;           &lt;NA&gt;          
+18 2014 Q2          1        0 &lt;NA&gt;           &lt;NA&gt;          
+19 2014 Q3          1        0 &lt;NA&gt;           &lt;NA&gt;          
+20 2014 Q4          1        0 &lt;NA&gt;           &lt;NA&gt;          
+21 2015 Q1          1        0 &lt;NA&gt;           &lt;NA&gt;          
+22 2015 Q2          1        0 &lt;NA&gt;           &lt;NA&gt;          
+23 2015 Q3          1        0 &lt;NA&gt;           &lt;NA&gt;          
+24 2015 Q4          1        0 &lt;NA&gt;           &lt;NA&gt;          
+25 2016 Q1          1        0 &lt;NA&gt;           &lt;NA&gt;          
+26 2016 Q2          1        0 &lt;NA&gt;           &lt;NA&gt;          
+27 2016 Q3          1        0 &lt;NA&gt;           &lt;NA&gt;          
+28 2016 Q4          1        0 &lt;NA&gt;           &lt;NA&gt;          
+29 2017 Q1          1        0 &lt;NA&gt;           &lt;NA&gt;          
+30 2017 Q2          1        0 &lt;NA&gt;           &lt;NA&gt;          
+31 2017 Q3          1        0 &lt;NA&gt;           &lt;NA&gt;          
+32 2017 Q4          1        0 &lt;NA&gt;           &lt;NA&gt;          
+33 2018 Q1          1        0 &lt;NA&gt;           &lt;NA&gt;          
+34 2018 Q2          1        0 &lt;NA&gt;           &lt;NA&gt;          
+35 2018 Q3          1        0 &lt;NA&gt;           &lt;NA&gt;          
+36 2018 Q4          1        0 &lt;NA&gt;           &lt;NA&gt;          
+37 2019 Q1          1        0 &lt;NA&gt;           &lt;NA&gt;          
+38 2019 Q2          1        1 &lt;NA&gt;           START_D2      
+39 2019 Q3          1        1 &lt;NA&gt;           &lt;NA&gt;          
+40 2019 Q4          1        1 &lt;NA&gt;           &lt;NA&gt;          
+41 2020 Q1          1        1 &lt;NA&gt;           &lt;NA&gt;          
+42 2020 Q2          1        1 &lt;NA&gt;           &lt;NA&gt;          
+43 2020 Q3          1        1 &lt;NA&gt;           &lt;NA&gt;          
+44 2020 Q4          1        1 &lt;NA&gt;           &lt;NA&gt;          
+45 2021 Q1          1        1 &lt;NA&gt;           &lt;NA&gt;          
+46 2021 Q2          1        1 &lt;NA&gt;           &lt;NA&gt;          
+47 2021 Q3          1        1 &lt;NA&gt;           &lt;NA&gt;          
+48 2021 Q4          1        1 &lt;NA&gt;           &lt;NA&gt;          
+49 2022 Q1          1        1 &lt;NA&gt;           &lt;NA&gt;          
+50 2022 Q2          1        1 &lt;NA&gt;           &lt;NA&gt;          
+51 2022 Q3          1        1 &lt;NA&gt;           &lt;NA&gt;          
+52 2022 Q4          1        1 &lt;NA&gt;           &lt;NA&gt;          
+53 2023 Q1          1        1 &lt;NA&gt;           &lt;NA&gt;          
+54 2023 Q2          1        1 &lt;NA&gt;           &lt;NA&gt;          
+55 2023 Q3          1        1 &lt;NA&gt;           &lt;NA&gt;          
+56 2023 Q4          1        1 &lt;NA&gt;           &lt;NA&gt;          
+57 2024 Q1          1        1 &lt;NA&gt;           &lt;NA&gt;          
+58 2024 Q2          1        1 &lt;NA&gt;           &lt;NA&gt;          
+59 2024 Q3          1        1 &lt;NA&gt;           &lt;NA&gt;          
+60 2024 Q4          1        1 &lt;NA&gt;           &lt;NA&gt;          
+61 2025 Q1          1        1 &lt;NA&gt;           &lt;NA&gt;          </code></pre>
+</div>
+</div>
+</section>
+<section id="optimal-lag-using-var-model-with-dummies-included" class="level2">
+<h2 class="anchored" data-anchor-id="optimal-lag-using-var-model-with-dummies-included">Optimal Lag using VAR model with dummies included</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correct usage of VARselect: only endogenous variables</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>log_vars <span class="ot">&lt;-</span> <span class="fu">ts</span>(combined_data[, <span class="fu">c</span>(<span class="st">"log_BTC_Price"</span>, <span class="st">"log_SP500"</span>, <span class="st">"log_Real_GDP"</span>, <span class="st">"log_M2"</span>)],</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2009</span>, <span class="dv">1</span>), <span class="at">frequency =</span> <span class="dv">4</span>)</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="fu">VARselect</span>(log_vars, <span class="at">lag.max =</span> <span class="dv">6</span>, <span class="at">type =</span> <span class="st">"const"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$selection
+AIC(n)  HQ(n)  SC(n) FPE(n) 
+     2      2      2      2 
+
+$criteria
+                   1             2             3             4             5
+AIC(n) -2.350173e+01 -2.452562e+01 -2.430434e+01 -2.415401e+01 -2.400903e+01
+HQ(n)  -2.321945e+01 -2.401752e+01 -2.357042e+01 -2.319428e+01 -2.282348e+01
+SC(n)  -2.277179e+01 -2.321173e+01 -2.240649e+01 -2.167222e+01 -2.094328e+01
+FPE(n)  6.225929e-11  2.258488e-11  2.887940e-11  3.518432e-11  4.403299e-11
+                   6
+AIC(n) -2.424795e+01
+HQ(n)  -2.283659e+01
+SC(n)  -2.059826e+01
+FPE(n)  3.925268e-11</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="test-for-cointegration-johansen-test" class="level1">
+<h1>Test for Cointegration (Johansen Test)</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(urca)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Verify correct time series start date (align with your actual data start)</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------------------</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the first date in your dataset</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>first_date <span class="ot">&lt;-</span> combined_data<span class="sc">$</span>Date[<span class="dv">1</span>]</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"First date in dataset:"</span>, <span class="fu">as.character</span>(first_date), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>First date in dataset: 2010 Q1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create time series object with PROPER start date (critical for alignment)</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="co"># From your data snapshot, it starts at 2010 Q1 (c(2010, 1))</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>log_vars <span class="ot">&lt;-</span> <span class="fu">ts</span>(combined_data[, <span class="fu">c</span>(<span class="st">"log_BTC_Price"</span>, <span class="st">"log_SP500"</span>, <span class="st">"log_Real_GDP"</span>, <span class="st">"log_M2"</span>)],</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2010</span>, <span class="dv">1</span>),  <span class="co"># Adjusted to match your actual data start</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">frequency =</span> <span class="dv">4</span>)</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Convert dummies to MATRIX (required by ca.jo)</span></span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a><span class="co"># -----------------------------------------------</span></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>break_dummies <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(combined_data[, <span class="fu">c</span>(<span class="st">"Break_D1"</span>, <span class="st">"Break_D2"</span>)])</span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Johansen test with VERIFIED parameters</span></span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a><span class="co"># -----------------------------------------</span></span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a>johansen_model <span class="ot">&lt;-</span> <span class="fu">ca.jo</span>(</span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a>  log_vars,</span>
+<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"trace"</span>, </span>
+<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">ecdet =</span> <span class="st">"const"</span>,</span>
+<span id="cb64-17"><a href="#cb64-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">K =</span> <span class="dv">2</span>,              <span class="co"># Optimal VAR lag in levels (confirmed correct)</span></span>
+<span id="cb64-18"><a href="#cb64-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">dumvar =</span> break_dummies  <span class="co"># Structural break dummies as matrix</span></span>
+<span id="cb64-19"><a href="#cb64-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb64-20"><a href="#cb64-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-21"><a href="#cb64-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Enhanced summary interpretation</span></span>
+<span id="cb64-22"><a href="#cb64-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------------------------------</span></span>
+<span id="cb64-23"><a href="#cb64-23" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(johansen_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+###################### 
+# Johansen-Procedure # 
+###################### 
+
+Test type: trace statistic , without linear trend and constant in cointegration 
+
+Eigenvalues (lambda):
+[1] 3.136490e-01 2.671061e-01 2.093351e-01 7.361726e-02 9.714451e-17
+
+Values of teststatistic and critical values of test:
+
+          test 10pct  5pct  1pct
+r &lt;= 3 |  4.51  7.52  9.24 12.97
+r &lt;= 2 | 18.37 17.85 19.96 24.60
+r &lt;= 1 | 36.70 32.00 34.91 41.07
+r = 0  | 58.91 49.65 53.12 60.16
+
+Eigenvectors, normalised to first column:
+(These are the cointegration relations)
+
+                 log_BTC_Price.l2 log_SP500.l2 log_Real_GDP.l2  log_M2.l2
+log_BTC_Price.l2          1.00000       1.0000        1.000000   1.000000
+log_SP500.l2             39.88252    -631.1652        2.337873  -8.919524
+log_Real_GDP.l2         -51.04897    3060.5286      -29.414422 -14.743429
+log_M2.l2               -81.69294    -109.5660       -4.248660   5.168630
+constant                965.21816  -24433.8389      307.368352 163.454698
+                     constant
+log_BTC_Price.l2     1.000000
+log_SP500.l2       -16.875360
+log_Real_GDP.l2    137.976780
+log_M2.l2           -7.470397
+constant         -1152.517058
+
+Weights W:
+(This is the loading matrix)
+
+                log_BTC_Price.l2  log_SP500.l2 log_Real_GDP.l2     log_M2.l2
+log_BTC_Price.d     0.0192409549 -3.224124e-03    -0.191424094 -0.0437940948
+log_SP500.d        -0.0033999982  4.770180e-04    -0.011619600  0.0112199046
+log_Real_GDP.d     -0.0009091293 -8.491777e-05     0.000925905  0.0018526478
+log_M2.d            0.0014565243  7.650192e-05    -0.001842775 -0.0005267709
+                     constant
+log_BTC_Price.d  1.228486e-12
+log_SP500.d     -6.616040e-13
+log_Real_GDP.d   5.246416e-14
+log_M2.d        -2.285070e-14</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Critical check: Compare test statistics to critical values</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (Look for when trace statistic &gt; critical value to determine cointegration rank)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li><p><strong>At 5% significance</strong>:</p>
+<ul>
+<li>Reject r=0 , but fail to reject r≤1<br>
+⇒ <strong>Cointegration rank</strong> r=1(one long-run relationship).</li>
+</ul></li>
+</ul>
+<!-- -->
+<ul>
+<li><strong>One long-run equilibrium relationships</strong> among BTC, SP500, GDP, and M2. These relationships are stable even <strong>after accounting for structural breaks</strong></li>
+</ul>
+<section id="interpretation-of-long-run-relationships" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-long-run-relationships"><strong>Interpretation of Long-Run Relationships</strong></h3>
+<section id="bitcoin-btc-vs.-sp-500-sp500" class="level4">
+<h4 class="anchored" data-anchor-id="bitcoin-btc-vs.-sp-500-sp500"><strong>1. Bitcoin (BTC) vs.&nbsp;S&amp;P 500 (SP500)</strong></h4>
+<ul>
+<li><p><strong>Coefficient</strong>: <strong>-58.82</strong></p>
+<ul>
+<li><p>A 1% increase in the S&amp;P 500 is associated with a <strong>58.82% decrease</strong> in Bitcoin’s price in the long run.</p></li>
+<li><p><strong>Possible Explanation</strong>: Bitcoin may act as a <strong>“risk-off” asset</strong> during periods of equity market growth, inversely correlated with traditional risk assets.</p></li>
+</ul></li>
+<li><div>
+<h4 id="bitcoin-vs.-real-gdp" class="anchored"><strong>2. Bitcoin vs.&nbsp;Real GDP</strong></h4>
+</div>
+<ul>
+<li><p><strong>Coefficient</strong>: <strong>+47.67</strong></p>
+<ul>
+<li><p>A 1% increase in GDP is linked to a <strong>47.67% increase</strong> in Bitcoin’s price.</p></li>
+<li><p><strong>Possible Explanation</strong>: Bitcoin might be perceived as a hedge against economic instability. Strong GDP growth could correlate with increased institutional adoption or speculative interest.</p></li>
+</ul></li>
+</ul>
+<h4 id="bitcoin-vs.-m2-money-supply" class="anchored"><strong>3. Bitcoin vs.&nbsp;M2 Money Supply</strong></h4>
+<ul>
+<li><p><strong>Coefficient</strong>: <strong>+123.16</strong></p>
+<ul>
+<li><p>A 1% increase in M2 money supply corresponds to a <strong>123.16% rise</strong> in Bitcoin’s price.</p></li>
+<li><p><strong>Possible Explanation</strong>: Bitcoin may serve as a <strong>hedge against monetary expansion</strong>, with investors flocking to it during periods of loose monetary policy to preserve value.</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Equity Markets</strong>: Bitcoin’s inverse relationship with the S&amp;P 500 implies it may diversify portfolios during equity rallies.</p></li>
+<li><p><strong>Monetary Policy</strong>: The strong positive link to M2 highlights Bitcoin’s role as a potential <strong>“digital gold”</strong> during quantitative easing or inflationary periods.</p></li>
+<li><p><strong>Economic Growth</strong>: The GDP coefficient may reflect speculative demand during expansions or hedging during contractions.</p></li>
+</ul>
+</section>
+</section>
+<section id="cointegration-equations-long-run-equilibrium" class="level2">
+<h2 class="anchored" data-anchor-id="cointegration-equations-long-run-equilibrium"><strong>Cointegration Equations (Long-Run Equilibrium):</strong></h2>
+<ol type="1">
+<li><p>Based on the first eigenvector (for rank r=1):</p>
+<p>log_BTC_Price=−58.82⋅log_SP500+47.67⋅log_Real_GDP+123.16⋅log_M2−1177.77</p></li>
+</ol>
+</section>
+<section id="short-run-dynamics.-vecm-with-r-1" class="level2">
+<h2 class="anchored" data-anchor-id="short-run-dynamics.-vecm-with-r-1"><strong>Short-Run Dynamics.</strong> VECM with r = 1</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>vecm_model <span class="ot">&lt;-</span> <span class="fu">cajorls</span>(johansen_model, <span class="at">r =</span> <span class="dv">1</span>)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(vecm_model<span class="sc">$</span>rlm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Response log_BTC_Price.d :
+
+Call:
+lm(formula = log_BTC_Price.d ~ ect1 + Break_D1 + Break_D2 + log_BTC_Price.dl1 + 
+    log_SP500.dl1 + log_Real_GDP.dl1 + log_M2.dl1 - 1, data = data.mat)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.97655 -0.30945 -0.01297  0.35311  2.83430 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(&gt;|t|)   
+ect1               0.01924    0.01926   0.999   0.3225   
+Break_D1          -0.01630    0.16588  -0.098   0.9221   
+Break_D2           0.14959    0.34217   0.437   0.6638   
+log_BTC_Price.dl1 -0.01595    0.13484  -0.118   0.9063   
+log_SP500.dl1      3.79137    1.24321   3.050   0.0036 **
+log_Real_GDP.dl1   3.85742    7.21557   0.535   0.5952   
+log_M2.dl1         2.37407    6.74651   0.352   0.7263   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.6709 on 52 degrees of freedom
+Multiple R-squared:  0.2429,    Adjusted R-squared:  0.1409 
+F-statistic: 2.383 on 7 and 52 DF,  p-value: 0.03429
+
+
+Response log_SP500.d :
+
+Call:
+lm(formula = log_SP500.d ~ ect1 + Break_D1 + Break_D2 + log_BTC_Price.dl1 + 
+    log_SP500.dl1 + log_Real_GDP.dl1 + log_M2.dl1 - 1, data = data.mat)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.21777 -0.02590  0.01519  0.04689  0.10784 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)  
+ect1              -0.0034000  0.0021626  -1.572    0.122  
+Break_D1           0.0214058  0.0186239   1.149    0.256  
+Break_D2          -0.0513017  0.0384160  -1.335    0.188  
+log_BTC_Price.dl1  0.0004116  0.0151389   0.027    0.978  
+log_SP500.dl1     -0.2641827  0.1395772  -1.893    0.064 .
+log_Real_GDP.dl1   1.0791543  0.8101050   1.332    0.189  
+log_M2.dl1         1.5793994  0.7574431   2.085    0.042 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.07532 on 52 degrees of freedom
+Multiple R-squared:  0.2145,    Adjusted R-squared:  0.1088 
+F-statistic: 2.029 on 7 and 52 DF,  p-value: 0.06881
+
+
+Response log_Real_GDP.d :
+
+Call:
+lm(formula = log_Real_GDP.d ~ ect1 + Break_D1 + Break_D2 + log_BTC_Price.dl1 + 
+    log_SP500.dl1 + log_Real_GDP.dl1 + log_M2.dl1 - 1, data = data.mat)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.066284 -0.005303  0.000483  0.006401  0.020929 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)   
+ect1              -0.0009091  0.0003692  -2.462  0.01715 * 
+Break_D1           0.0037424  0.0031795   1.177  0.24455   
+Break_D2          -0.0142326  0.0065585  -2.170  0.03459 * 
+log_BTC_Price.dl1  0.0038650  0.0025845   1.495  0.14085   
+log_SP500.dl1      0.0764483  0.0238290   3.208  0.00229 **
+log_Real_GDP.dl1  -0.1044078  0.1383031  -0.755  0.45370   
+log_M2.dl1         0.2791693  0.1293125   2.159  0.03550 * 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.01286 on 52 degrees of freedom
+Multiple R-squared:  0.4638,    Adjusted R-squared:  0.3916 
+F-statistic: 6.424 on 7 and 52 DF,  p-value: 1.829e-05
+
+
+Response log_M2.d :
+
+Call:
+lm(formula = log_M2.d ~ ect1 + Break_D1 + Break_D2 + log_BTC_Price.dl1 + 
+    log_SP500.dl1 + log_Real_GDP.dl1 + log_M2.dl1 - 1, data = data.mat)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.019247 -0.007202  0.000215  0.005525  0.070535 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+ect1               0.0014565  0.0003975   3.664 0.000582 ***
+Break_D1           0.0011442  0.0034230   0.334 0.739529    
+Break_D2           0.0228874  0.0070607   3.242 0.002077 ** 
+log_BTC_Price.dl1 -0.0032614  0.0027825  -1.172 0.246491    
+log_SP500.dl1     -0.0528904  0.0256537  -2.062 0.044250 *  
+log_Real_GDP.dl1   0.2273560  0.1488940   1.527 0.132830    
+log_M2.dl1         0.5038250  0.1392150   3.619 0.000670 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.01384 on 52 degrees of freedom
+Multiple R-squared:  0.7035,    Adjusted R-squared:  0.6636 
+F-statistic: 17.63 on 7 and 52 DF,  p-value: 9.839e-12</code></pre>
+</div>
+</div>
+<section id="equation-1-δlog_btc_price" class="level3">
+<h3 class="anchored" data-anchor-id="equation-1-δlog_btc_price">Equation 1: Δlog_BTC_Price</h3>
+<p>Δlog_BTC_Price = 3.79 × Δlog_SP500</p>
+<p>In the short run, a 1% increase in S&amp;P 500 returns leads to a <strong>3.79% increase in BTC returns</strong>, suggesting some <strong>positive co-movement</strong> in the short-run, despite long-run substitution.</p>
+</section>
+<section id="equation-2-δlog_sp500" class="level3">
+<h3 class="anchored" data-anchor-id="equation-2-δlog_sp500">Equation 2: Δlog_SP500</h3>
+<p>Δlog_SP500 = -0.26 × Δlog_SP500 + 1.43 × Δlog_M2</p>
+<p>F stat is not signifficant</p>
+<ul>
+<li><p>It may suggest that <strong>S&amp;P500 is exogenous</strong> in your system — <strong>not responding</strong> to short-run fluctuations in BTC, GDP, or M2.</p></li>
+<li><p>However, if <strong>BTC or GDP</strong> respond to <strong>changes in SP500</strong>, that makes <strong>SP500 a key influencing variable</strong> — but not one that reacts to others in the short term.</p></li>
+</ul>
+</section>
+<section id="equation-3-δlog_real_gdp" class="level3">
+<h3 class="anchored" data-anchor-id="equation-3-δlog_real_gdp">Equation 3: Δlog_Real_GDP</h3>
+<p>Δlog_Real_GDP = -0.00065 × ECT1 − 0.014 × Break_D2 + 0.076 × Δlog_SP500 + 0.27 × Δlog_M2</p>
+<ul>
+<li>GDP adjusts <strong>back to long-run equilibrium</strong> (cointegration) when it diverges (significant ECT).</li>
+</ul>
+<!-- -->
+<ul>
+<li>Break_D2 likely captures a <strong>downward shock</strong> (e.g.&nbsp;COVID or 2019–2020).</li>
+</ul>
+<!-- -->
+<ul>
+<li>GDP increases with SP500 returns and money supply in the short term.</li>
+</ul>
+</section>
+<section id="equation-4-δlog_m2" class="level3">
+<h3 class="anchored" data-anchor-id="equation-4-δlog_m2">Equation 4: Δlog_M2</h3>
+<p>Δlog_M2 = 0.001 × ECT1 + 0.023 × Break_D2 − 0.053 × Δlog_SP500 + 0.52 × Δlog_M2</p>
+<ul>
+<li>M2 <strong>adjusts back to equilibrium</strong> (strong loading on ECT1).</li>
+</ul>
+<!-- -->
+<ul>
+<li>Sharp <strong>structural breaks (Break_D2)</strong> likely reflect central bank monetary responses.</li>
+</ul>
+<!-- -->
+<ul>
+<li><p>Past M2 predicts current M2 (strong autoregressive effect).</p></li>
+<li><p>The system has <strong>1 cointegrating relationship</strong>, and <strong>multiple short-run linkages</strong>.</p></li>
+</ul>
+<!-- -->
+<ul>
+<li><strong>BTC</strong> reacts to SP500 in short-run; <strong>SP500</strong> is influenced by M2.</li>
+</ul>
+<!-- -->
+<ul>
+<li><strong>GDP</strong> is strongly tied to SP500 and M2 in the short-run, and <strong>adjusts to the long-run error correction term</strong>.</li>
+</ul>
+<!-- -->
+<ul>
+<li><strong>M2</strong> plays a major role, with strong autoregression and reaction to structural breaks.</li>
+</ul>
+</section>
+<section id="residuals-check-heteroskedastisity" class="level3">
+<h3 class="anchored" data-anchor-id="residuals-check-heteroskedastisity">Residuals check (heteroskedastisity)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">arch.test</span>(<span class="fu">vec2var</span>(johansen_model, <span class="at">r =</span> <span class="dv">1</span>), <span class="at">lags.multi =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    ARCH (multivariate)
+
+data:  Residuals of VAR object vec2var(johansen_model, r = 1)
+Chi-squared = 528.03, df = 500, p-value = 0.1864</code></pre>
+</div>
+</div>
+<p><strong>Model does not show heteroskedasticity</strong> in the error terms.</p>
+</section>
+</section>
+</section>
+<section id="granger-causality" class="level1">
+<h1>Granger Causality</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a VAR model with the selected lag (e.g., p = 2)</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>var_model <span class="ot">&lt;-</span> <span class="fu">VAR</span>(</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> combined_data[, <span class="fu">c</span>(<span class="st">"log_BTC_Price"</span>, <span class="st">"log_SP500"</span>, <span class="st">"log_Real_GDP"</span>, <span class="st">"log_M2"</span>)],</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">p =</span> <span class="dv">2</span>,              <span class="co"># use the same lag as your VECM K</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"const"</span>,     </span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">exogen =</span> <span class="fu">as.matrix</span>(combined_data[, <span class="fu">c</span>(<span class="st">"Break_D1"</span>, <span class="st">"Break_D2"</span>)])</span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>variables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"log_BTC_Price"</span>, <span class="st">"log_SP500"</span>, <span class="st">"log_Real_GDP"</span>, <span class="st">"log_M2"</span>)</span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each pair for Granger causality</span></span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (cause_var <span class="cf">in</span> variables) {</span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (effect_var <span class="cf">in</span> variables) {</span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (cause_var <span class="sc">!=</span> effect_var) {</span>
+<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">================================================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Testing if"</span>, cause_var, <span class="st">"Granger-causes"</span>, effect_var, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"================================================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb71-17"><a href="#cb71-17" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb71-18"><a href="#cb71-18" aria-hidden="true" tabindex="-1"></a>      result <span class="ot">&lt;-</span> <span class="fu">causality</span>(var_model, <span class="at">cause =</span> cause_var)</span>
+<span id="cb71-19"><a href="#cb71-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(result<span class="sc">$</span>Granger)</span>
+<span id="cb71-20"><a href="#cb71-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb71-21"><a href="#cb71-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb71-22"><a href="#cb71-22" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+================================================
+Testing if log_BTC_Price Granger-causes log_SP500 
+================================================
+
+    Granger causality H0: log_BTC_Price do not Granger-cause log_SP500
+    log_Real_GDP log_M2
+
+data:  VAR object var_model
+F-Test = 0.46192, df1 = 6, df2 = 192, p-value = 0.8359
+
+
+================================================
+Testing if log_BTC_Price Granger-causes log_Real_GDP 
+================================================
+
+    Granger causality H0: log_BTC_Price do not Granger-cause log_SP500
+    log_Real_GDP log_M2
+
+data:  VAR object var_model
+F-Test = 0.46192, df1 = 6, df2 = 192, p-value = 0.8359
+
+
+================================================
+Testing if log_BTC_Price Granger-causes log_M2 
+================================================
+
+    Granger causality H0: log_BTC_Price do not Granger-cause log_SP500
+    log_Real_GDP log_M2
+
+data:  VAR object var_model
+F-Test = 0.46192, df1 = 6, df2 = 192, p-value = 0.8359
+
+
+================================================
+Testing if log_SP500 Granger-causes log_BTC_Price 
+================================================
+
+    Granger causality H0: log_SP500 do not Granger-cause log_BTC_Price
+    log_Real_GDP log_M2
+
+data:  VAR object var_model
+F-Test = 5.9868, df1 = 6, df2 = 192, p-value = 9.322e-06
+
+
+================================================
+Testing if log_SP500 Granger-causes log_Real_GDP 
+================================================
+
+    Granger causality H0: log_SP500 do not Granger-cause log_BTC_Price
+    log_Real_GDP log_M2
+
+data:  VAR object var_model
+F-Test = 5.9868, df1 = 6, df2 = 192, p-value = 9.322e-06
+
+
+================================================
+Testing if log_SP500 Granger-causes log_M2 
+================================================
+
+    Granger causality H0: log_SP500 do not Granger-cause log_BTC_Price
+    log_Real_GDP log_M2
+
+data:  VAR object var_model
+F-Test = 5.9868, df1 = 6, df2 = 192, p-value = 9.322e-06
+
+
+================================================
+Testing if log_Real_GDP Granger-causes log_BTC_Price 
+================================================
+
+    Granger causality H0: log_Real_GDP do not Granger-cause log_BTC_Price
+    log_SP500 log_M2
+
+data:  VAR object var_model
+F-Test = 2.1062, df1 = 6, df2 = 192, p-value = 0.05431
+
+
+================================================
+Testing if log_Real_GDP Granger-causes log_SP500 
+================================================
+
+    Granger causality H0: log_Real_GDP do not Granger-cause log_BTC_Price
+    log_SP500 log_M2
+
+data:  VAR object var_model
+F-Test = 2.1062, df1 = 6, df2 = 192, p-value = 0.05431
+
+
+================================================
+Testing if log_Real_GDP Granger-causes log_M2 
+================================================
+
+    Granger causality H0: log_Real_GDP do not Granger-cause log_BTC_Price
+    log_SP500 log_M2
+
+data:  VAR object var_model
+F-Test = 2.1062, df1 = 6, df2 = 192, p-value = 0.05431
+
+
+================================================
+Testing if log_M2 Granger-causes log_BTC_Price 
+================================================
+
+    Granger causality H0: log_M2 do not Granger-cause log_BTC_Price
+    log_SP500 log_Real_GDP
+
+data:  VAR object var_model
+F-Test = 2.5089, df1 = 6, df2 = 192, p-value = 0.02323
+
+
+================================================
+Testing if log_M2 Granger-causes log_SP500 
+================================================
+
+    Granger causality H0: log_M2 do not Granger-cause log_BTC_Price
+    log_SP500 log_Real_GDP
+
+data:  VAR object var_model
+F-Test = 2.5089, df1 = 6, df2 = 192, p-value = 0.02323
+
+
+================================================
+Testing if log_M2 Granger-causes log_Real_GDP 
+================================================
+
+    Granger causality H0: log_M2 do not Granger-cause log_BTC_Price
+    log_SP500 log_Real_GDP
+
+data:  VAR object var_model
+F-Test = 2.5089, df1 = 6, df2 = 192, p-value = 0.02323</code></pre>
+</div>
+</div>
+<ul>
+<li><p>The <strong>Granger causality tests</strong> reveal the following short-run predictive dynamics (at 5% level):</p>
+<ul>
+<li><strong>S&amp;P500 Granger-causes BTC, Real GDP, and M2</strong>: This suggests that stock market movements serve as a <strong>leading indicator</strong> for both cryptocurrency and broader macroeconomic variables.</li>
+</ul>
+<pre><code>**M2 Granger-causes BTC, Real GDP, and SP500**: This is consistent with the role of **monetary policy in driving liquidity and expectations** in financial and macroeconomic environments.
+
+**BTC does not Granger-cause any of the other variables**, indicating that Bitcoin behaves more like a **follower** or **reactive asset** in this macro-financial framework.
+
+**Real GDP shows no significant predictive power**, although it is marginal in some tests.</code></pre></li>
+</ul>
+</section>
+<section id="part" class="level1">
+<h1>2 part</h1>
+<section id="bivariate-cointegration-between-btc-and-each-countrys-gdp" class="level3">
+<h3 class="anchored" data-anchor-id="bivariate-cointegration-between-btc-and-each-countrys-gdp">Bivariate cointegration between BTC and each country’s GDP</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Load the data</span></span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>gdp_all_countries <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'GDP_all_countries.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 64 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+dbl  (5): GDP_CH, GDP_US, GDP_AR, GDP_SV, GDP_JP
+date (1): Date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Convert Date column if needed</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>gdp_all_countries <span class="ot">&lt;-</span> gdp_all_countries <span class="sc">%&gt;%</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">as.Date</span>(Date))</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Drop GDP_US (excluded from this analysis)</span></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>gdp_data <span class="ot">&lt;-</span> gdp_all_countries <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>GDP_US)</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Take log of all GDP columns (except Date)</span></span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>gdp_logged <span class="ot">&lt;-</span> gdp_data <span class="sc">%&gt;%</span></span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">"GDP_"</span>), log))</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Reshape to long format for plotting</span></span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>gdp_long_log <span class="ot">&lt;-</span> gdp_logged <span class="sc">%&gt;%</span></span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"GDP_"</span>),</span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"Country"</span>,</span>
+<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"log_GDP"</span></span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-20"><a href="#cb76-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Plot logged GDP by country</span></span>
+<span id="cb76-21"><a href="#cb76-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gdp_long_log, <span class="fu">aes</span>(<span class="at">x =</span> Date, <span class="at">y =</span> log_GDP)) <span class="sc">+</span></span>
+<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb76-23"><a href="#cb76-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Country, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb76-24"><a href="#cb76-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Log of Quarterly GDP by Country"</span>,</span>
+<span id="cb76-25"><a href="#cb76-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Log(GDP)"</span>) <span class="sc">+</span></span>
+<span id="cb76-26"><a href="#cb76-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb76-27"><a href="#cb76-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb76-28"><a href="#cb76-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb76-29"><a href="#cb76-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb76-30"><a href="#cb76-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)</span>
+<span id="cb76-31"><a href="#cb76-31" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. KPSS Test Function</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>kpss_check <span class="ot">&lt;-</span> <span class="cf">function</span>(series, name) {</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">===============================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"KPSS Test for"</span>, name, <span class="st">"(Level)</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"===============================</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>  test_level <span class="ot">&lt;-</span> <span class="fu">kpss.test</span>(<span class="fu">na.omit</span>(series), <span class="at">null =</span> <span class="st">"Level"</span>)</span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"KPSS Statistic:"</span>, <span class="fu">round</span>(test_level<span class="sc">$</span>statistic, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"p-value        :"</span>, <span class="fu">round</span>(test_level<span class="sc">$</span>p.value, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb77-11"><a href="#cb77-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (test_level<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.05</span>) {</span>
+<span id="cb77-12"><a href="#cb77-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Conclusion     : ❌ Non-stationary at level</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-13"><a href="#cb77-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb77-14"><a href="#cb77-14" aria-hidden="true" tabindex="-1"></a>    diff_series <span class="ot">&lt;-</span> <span class="fu">diff</span>(series)</span>
+<span id="cb77-15"><a href="#cb77-15" aria-hidden="true" tabindex="-1"></a>    test_diff <span class="ot">&lt;-</span> <span class="fu">kpss.test</span>(<span class="fu">na.omit</span>(diff_series), <span class="at">null =</span> <span class="st">"Level"</span>)</span>
+<span id="cb77-16"><a href="#cb77-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">KPSS Test for First Difference of"</span>, name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-17"><a href="#cb77-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"KPSS Statistic:"</span>, <span class="fu">round</span>(test_diff<span class="sc">$</span>statistic, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-18"><a href="#cb77-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"p-value        :"</span>, <span class="fu">round</span>(test_diff<span class="sc">$</span>p.value, <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-19"><a href="#cb77-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb77-20"><a href="#cb77-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (test_diff<span class="sc">$</span>p.value <span class="sc">&gt;</span> <span class="fl">0.05</span>) {</span>
+<span id="cb77-21"><a href="#cb77-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Conclusion     : ✅ Stationary after differencing</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-22"><a href="#cb77-22" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb77-23"><a href="#cb77-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Conclusion     : ❌ Still non-stationary after differencing</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-24"><a href="#cb77-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb77-25"><a href="#cb77-25" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb77-26"><a href="#cb77-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Conclusion     : ✅ Stationary at level</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb77-27"><a href="#cb77-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb77-28"><a href="#cb77-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb77-29"><a href="#cb77-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-30"><a href="#cb77-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 8. Apply KPSS Test to All Logged Series</span></span>
+<span id="cb77-31"><a href="#cb77-31" aria-hidden="true" tabindex="-1"></a>log_gdp_only <span class="ot">&lt;-</span> gdp_logged <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Date)</span>
+<span id="cb77-32"><a href="#cb77-32" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (col <span class="cf">in</span> <span class="fu">colnames</span>(log_gdp_only)) {</span>
+<span id="cb77-33"><a href="#cb77-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kpss_check</span>(log_gdp_only[[col]], col)</span>
+<span id="cb77-34"><a href="#cb77-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+===============================
+KPSS Test for GDP_CH (Level)
+===============================</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(series), null = "Level"): p-value greater than
+printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KPSS Statistic: 0.123 
+p-value        : 0.1 
+Conclusion     : ✅ Stationary at level
+
+===============================
+KPSS Test for GDP_AR (Level)
+===============================</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(series), null = "Level"): p-value smaller than
+printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KPSS Statistic: 1.6073 
+p-value        : 0.01 
+Conclusion     : ❌ Non-stationary at level
+
+KPSS Test for First Difference of GDP_AR 
+KPSS Statistic: 0.6584 
+p-value        : 0.0173 
+Conclusion     : ❌ Still non-stationary after differencing
+
+===============================
+KPSS Test for GDP_SV (Level)
+===============================</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(series), null = "Level"): p-value smaller than
+printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KPSS Statistic: 1.5902 
+p-value        : 0.01 
+Conclusion     : ❌ Non-stationary at level</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(diff_series), null = "Level"): p-value greater
+than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+KPSS Test for First Difference of GDP_SV 
+KPSS Statistic: 0.0415 
+p-value        : 0.1 
+Conclusion     : ✅ Stationary after differencing
+
+===============================
+KPSS Test for GDP_JP (Level)
+===============================</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(series), null = "Level"): p-value smaller than
+printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>KPSS Statistic: 1.1104 
+p-value        : 0.01 
+Conclusion     : ❌ Non-stationary at level</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in kpss.test(na.omit(diff_series), null = "Level"): p-value greater
+than printed p-value</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+KPSS Test for First Difference of GDP_JP 
+KPSS Statistic: 0.1967 
+p-value        : 0.1 
+Conclusion     : ✅ Stationary after differencing</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)  <span class="co"># for as.yearqtr</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Date to year-quarter if needed</span></span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>gdp_logged <span class="ot">&lt;-</span> gdp_logged <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">as.yearqtr</span>(Date))</span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Also convert Date in combined_data (to align with gdp_logged)</span></span>
+<span id="cb91-7"><a href="#cb91-7" aria-hidden="true" tabindex="-1"></a>combined_data <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">as.yearqtr</span>(Date))</span>
+<span id="cb91-8"><a href="#cb91-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-9"><a href="#cb91-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with Japanese GDP</span></span>
+<span id="cb91-10"><a href="#cb91-10" aria-hidden="true" tabindex="-1"></a>btc_gdp_japan <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span></span>
+<span id="cb91-11"><a href="#cb91-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Date, log_BTC_Price) <span class="sc">%&gt;%</span></span>
+<span id="cb91-12"><a href="#cb91-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gdp_logged <span class="sc">%&gt;%</span> <span class="fu">select</span>(Date, <span class="at">log_GDP_JP =</span> GDP_JP), <span class="at">by =</span> <span class="st">"Date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb91-13"><a href="#cb91-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Date, log_BTC_Price, log_GDP_JP)</span>
+<span id="cb91-14"><a href="#cb91-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-15"><a href="#cb91-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Join with El Salvador GDP</span></span>
+<span id="cb91-16"><a href="#cb91-16" aria-hidden="true" tabindex="-1"></a>btc_gdp_elsalvador <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span></span>
+<span id="cb91-17"><a href="#cb91-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Date, log_BTC_Price) <span class="sc">%&gt;%</span></span>
+<span id="cb91-18"><a href="#cb91-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gdp_logged <span class="sc">%&gt;%</span> <span class="fu">select</span>(Date, <span class="at">log_GDP_ElSalvador =</span> GDP_SV), <span class="at">by =</span> <span class="st">"Date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb91-19"><a href="#cb91-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Date, log_BTC_Price, log_GDP_ElSalvador)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="engle-granger-japan-and-btc" class="level3">
+<h3 class="anchored" data-anchor-id="engle-granger-japan-and-btc">Engle-Granger (Japan and BTC)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>eg_model_japan <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_BTC_Price <span class="sc">~</span> log_GDP_JP, <span class="at">data =</span> btc_gdp_japan)</span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>resid_eg_japan <span class="ot">&lt;-</span> <span class="fu">residuals</span>(eg_model_japan)</span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>resid_ts_japan <span class="ot">&lt;-</span> <span class="fu">ts</span>(resid_eg_japan, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2009</span>, <span class="dv">1</span>), <span class="at">frequency =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="bai-perron-breakpoint-test-on-residuals" class="level3">
+<h3 class="anchored" data-anchor-id="bai-perron-breakpoint-test-on-residuals">Bai-Perron Breakpoint Test on Residuals</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(strucchange)</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>bp_japan <span class="ot">&lt;-</span> <span class="fu">breakpoints</span>(resid_ts_japan <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bp_japan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Optimal (m+1)-segment partition: 
+
+Call:
+breakpoints.formula(formula = resid_ts_japan ~ 1)
+
+Breakpoints at observation number:
+                     
+m = 1        25      
+m = 2        30    49
+m = 3   9    30    49
+m = 4   9 18 30    49
+m = 5   9 18 30 39 49
+
+Corresponding to breakdates:
+                                               
+m = 1                   2015(1)                
+m = 2                   2016(2)         2021(1)
+m = 3   2011(1)         2016(2)         2021(1)
+m = 4   2011(1) 2013(2) 2016(2)         2021(1)
+m = 5   2011(1) 2013(2) 2016(2) 2018(3) 2021(1)
+
+Fit:
+                                       
+m   0     1     2     3     4     5    
+RSS 380.9 240.6 152.2 133.5 131.1 129.9
+BIC 289.4 270.0 250.7 251.0 258.1 265.7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">breakpoints</span>(bp_japan)  <span class="co"># will return location of breaks</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Optimal 3-segment partition: 
+
+Call:
+breakpoints.breakpointsfull(obj = bp_japan)
+
+Breakpoints at observation number:
+30 49 
+
+Corresponding to breakdates:
+2016(2) 2021(1) </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(resid_ts_japan, <span class="at">main =</span> <span class="st">"BTC ~ Japan GDP Residuals (Engle-Granger)"</span>)</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">fitted</span>(bp_japan), <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">time</span>(resid_ts_japan)[bp_japan<span class="sc">$</span>breakpoints], <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="dummy-variables-1" class="level3">
+<h3 class="anchored" data-anchor-id="dummy-variables-1">Dummy variables</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(btc_gdp_japan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Date"          "log_BTC_Price" "log_GDP_JP"   </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>btc_gdp_japan<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.yearqtr</span>(btc_gdp_japan<span class="sc">$</span>Date)</span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>btc_gdp_japan<span class="sc">$</span>Break_D1 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(btc_gdp_japan<span class="sc">$</span>Date <span class="sc">&gt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2016 Q2"</span>), <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>btc_gdp_japan<span class="sc">$</span>Break_D2 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(btc_gdp_japan<span class="sc">$</span>Date <span class="sc">&gt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2021 Q1"</span>), <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>btc_gdp_japan <span class="sc">%&gt;%</span></span>
+<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Break_D1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> Break_D2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb100-9"><a href="#cb100-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Date, Break_D1, Break_D2) <span class="sc">%&gt;%</span></span>
+<span id="cb100-10"><a href="#cb100-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   Date      Break_D1 Break_D2
+   &lt;yearqtr&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+ 1 2016 Q2          1        0
+ 2 2016 Q3          1        0
+ 3 2016 Q4          1        0
+ 4 2017 Q1          1        0
+ 5 2017 Q2          1        0
+ 6 2017 Q3          1        0
+ 7 2017 Q4          1        0
+ 8 2018 Q1          1        0
+ 9 2018 Q2          1        0
+10 2018 Q3          1        0
+11 2018 Q4          1        0
+12 2019 Q1          1        0
+13 2019 Q2          1        0
+14 2019 Q3          1        0
+15 2019 Q4          1        0
+16 2020 Q1          1        0
+17 2020 Q2          1        0
+18 2020 Q3          1        0
+19 2020 Q4          1        0
+20 2021 Q1          1        1</code></pre>
+</div>
+</div>
+</section>
+<section id="re-estimate-cointegration-with-break-dummies" class="level3">
+<h3 class="anchored" data-anchor-id="re-estimate-cointegration-with-break-dummies">Re-estimate Cointegration with Break Dummies</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>eg_model_breaks <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_BTC_Price <span class="sc">~</span> log_GDP_JP <span class="sc">+</span> Break_D1, <span class="at">data =</span> btc_gdp_japan)</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>resid_adj <span class="ot">&lt;-</span> <span class="fu">residuals</span>(eg_model_breaks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(eg_model_breaks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log_BTC_Price ~ log_GDP_JP + Break_D1, data = btc_gdp_japan)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-5.707 -1.032  0.273  1.145  3.643 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   81.978     12.172   6.735 8.80e-09 ***
+log_GDP_JP   -10.961      1.686  -6.502 2.14e-08 ***
+Break_D1       4.419      0.557   7.934 8.85e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.782 on 57 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.8015,    Adjusted R-squared:  0.7945 
+F-statistic: 115.1 on 2 and 57 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<section id="cointegration-equation" class="level4">
+<h4 class="anchored" data-anchor-id="cointegration-equation">Cointegration Equation</h4>
+<p>log(BTC_Price)t​=81.978−10.961⋅log(GDP_JP)t​+4.419⋅Break_D1t​+εt​​</p>
+<ul>
+<li><p><strong>Intercept (81.978):</strong></p>
+<ul>
+<li><p>This represents the baseline log-BTC price when Japan’s GDP is at 1 (which is theoretical in log terms) and before the structural break occurred (Break_D1 = 0).</p>
+<p>It helps anchor the regression line but is not directly interpretable economically.\</p></li>
+<li><p><strong>log(GDP_JP) Coefficient (−10.961):</strong></p></li>
+</ul>
+<p>For every <strong>1% increase in Japan’s GDP</strong>, the <strong>log of Bitcoin price decreases by ~10.96%</strong>, holding everything else constant.</p>
+<p>This negative relationship suggests <strong>Bitcoin and Japanese economic performance may be substitutes</strong> in this time frame. Investors might shift toward BTC when macroeconomic conditions worsen.</p></li>
+</ul>
+<!-- -->
+<ul>
+<li><strong>Break_D1 Coefficient (+4.419)</strong></li>
+</ul>
+<pre><code>-   After **2012 Q1**, Bitcoin’s log price increased **permanently by about 4.42 units**, controlling for GDP.
+
+    This implies a **structural shift** in BTC pricing dynamics starting from that quarter. It may reflect a macroeconomic regime change, financial innovation, or growing BTC adoption.</code></pre>
+</section>
+</section>
+<section id="run-unit-root-test-on-adjusted-residuals-engle-granger" class="level3">
+<h3 class="anchored" data-anchor-id="run-unit-root-test-on-adjusted-residuals-engle-granger">Run Unit Root Test on Adjusted Residuals (Engle-Granger)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(urca)</span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>adf_result <span class="ot">&lt;-</span> <span class="fu">ur.df</span>(resid_adj, <span class="at">type =</span> <span class="st">"none"</span>, <span class="at">selectlags =</span> <span class="st">"AIC"</span>)</span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adf_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+############################################### 
+# Augmented Dickey-Fuller Test Unit Root Test # 
+############################################### 
+
+Test regression none 
+
+
+Call:
+lm(formula = z.diff ~ z.lag.1 - 1 + z.diff.lag)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.4720 -0.4896 -0.0198  0.6673  2.9535 
+
+Coefficients:
+           Estimate Std. Error t value Pr(&gt;|t|)    
+z.lag.1    -0.29731    0.08009  -3.712 0.000475 ***
+z.diff.lag  0.08320    0.12034   0.691 0.492161    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.9606 on 56 degrees of freedom
+Multiple R-squared:  0.1975,    Adjusted R-squared:  0.1689 
+F-statistic: 6.893 on 2 and 56 DF,  p-value: 0.002108
+
+
+Value of test-statistic is: -3.7123 
+
+Critical values for test statistics: 
+     1pct  5pct 10pct
+tau1 -2.6 -1.95 -1.61</code></pre>
+</div>
+</div>
+<p>Since test statistic (−3.7123) &lt; all critical values, you reject the null hypothesis of a unit root in the residuals. The residuals are stationary, so there is cointegration between Bitcoin and Japan’s GDP, even after accounting for structural breaks (2016 Q2 and 2021 Q1).</p>
+</section>
+<section id="granger-causality-1" class="level3">
+<h3 class="anchored" data-anchor-id="granger-causality-1">Granger Causality</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required libraries</span></span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vars)</span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb108-5"><a href="#cb108-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-6"><a href="#cb108-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Prepare time series data</span></span>
+<span id="cb108-7"><a href="#cb108-7" aria-hidden="true" tabindex="-1"></a>granger_data <span class="ot">&lt;-</span> btc_gdp_japan <span class="sc">%&gt;%</span></span>
+<span id="cb108-8"><a href="#cb108-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(log_BTC_Price, log_GDP_JP) <span class="sc">%&gt;%</span></span>
+<span id="cb108-9"><a href="#cb108-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
+<span id="cb108-10"><a href="#cb108-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-11"><a href="#cb108-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Convert to time series object (adjust start if needed)</span></span>
+<span id="cb108-12"><a href="#cb108-12" aria-hidden="true" tabindex="-1"></a>granger_ts <span class="ot">&lt;-</span> <span class="fu">ts</span>(granger_data, <span class="at">frequency =</span> <span class="dv">4</span>, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2009</span>, <span class="dv">1</span>))</span>
+<span id="cb108-13"><a href="#cb108-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-14"><a href="#cb108-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Use VARselect to choose optimal lag length</span></span>
+<span id="cb108-15"><a href="#cb108-15" aria-hidden="true" tabindex="-1"></a>lag_selection <span class="ot">&lt;-</span> <span class="fu">VARselect</span>(granger_ts, <span class="at">lag.max =</span> <span class="dv">6</span>, <span class="at">type =</span> <span class="st">"const"</span>)</span>
+<span id="cb108-16"><a href="#cb108-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(lag_selection<span class="sc">$</span>selection)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>AIC(n)  HQ(n)  SC(n) FPE(n) 
+     1      1      1      1 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Use the lag chosen by AIC</span></span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>optimal_lag <span class="ot">&lt;-</span> lag_selection<span class="sc">$</span>selection[<span class="st">"AIC(n)"</span>]</span>
+<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Run Granger causality tests with optimal lag</span></span>
+<span id="cb110-5"><a href="#cb110-5" aria-hidden="true" tabindex="-1"></a>gdp_causes_btc <span class="ot">&lt;-</span> <span class="fu">grangertest</span>(log_BTC_Price <span class="sc">~</span> log_GDP_JP,</span>
+<span id="cb110-6"><a href="#cb110-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">order =</span> optimal_lag, <span class="at">data =</span> granger_data)</span>
+<span id="cb110-7"><a href="#cb110-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb110-8"><a href="#cb110-8" aria-hidden="true" tabindex="-1"></a>btc_causes_gdp <span class="ot">&lt;-</span> <span class="fu">grangertest</span>(log_GDP_JP <span class="sc">~</span> log_BTC_Price,</span>
+<span id="cb110-9"><a href="#cb110-9" aria-hidden="true" tabindex="-1"></a>                              <span class="at">order =</span> optimal_lag, <span class="at">data =</span> granger_data)</span>
+<span id="cb110-10"><a href="#cb110-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb110-11"><a href="#cb110-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 6: Print results</span></span>
+<span id="cb110-12"><a href="#cb110-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Granger Causality Tests (Lag ="</span>, optimal_lag, <span class="st">")</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Granger Causality Tests (Lag = 1 )</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"===============================================</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>===============================================</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Null Hypothesis: GDP does NOT Granger-cause BTC</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Null Hypothesis: GDP does NOT Granger-cause BTC</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"F-statistic :"</span>, <span class="fu">round</span>(gdp_causes_btc<span class="sc">$</span>F[<span class="dv">2</span>], <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>F-statistic : 0 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"p-value     :"</span>, <span class="fu">round</span>(gdp_causes_btc<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>p-value     : 0.9887 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb120"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a href="#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Null Hypothesis: BTC does NOT Granger-cause GDP</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Null Hypothesis: BTC does NOT Granger-cause GDP</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"F-statistic :"</span>, <span class="fu">round</span>(btc_causes_gdp<span class="sc">$</span>F[<span class="dv">2</span>], <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>F-statistic : 7.592 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb124"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"p-value     :"</span>, <span class="fu">round</span>(btc_causes_gdp<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>p-value     : 0.0079 </code></pre>
+</div>
+</div>
+<p><em>Bitcoin → GDP</em> (Granger-causal)<br>
+</p>
+<p><em>GDP → Bitcoin</em> (not Granger-causal)</p>
+<p>Bitcoin may act as a <strong>leading indicator</strong> or <strong>shock transmitter</strong> to GDP in Japan.<br>
+However, this is <strong>not structural causality</strong> — it shows a <strong>statistical precedence</strong> that may warrant deeper economic or policy analysis.</p>
+</section>
+<section id="btc-and-el-salvador" class="level2">
+<h2 class="anchored" data-anchor-id="btc-and-el-salvador">BTC and El Salvador</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb126"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
+<span id="cb126-2"><a href="#cb126-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(strucchange)</span>
+<span id="cb126-3"><a href="#cb126-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb126-4"><a href="#cb126-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(urca)</span>
+<span id="cb126-5"><a href="#cb126-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb126-6"><a href="#cb126-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb126-7"><a href="#cb126-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Run Engle-Granger regression</span></span>
+<span id="cb126-8"><a href="#cb126-8" aria-hidden="true" tabindex="-1"></a>eg_model_sv <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_BTC_Price <span class="sc">~</span> log_GDP_ElSalvador, <span class="at">data =</span> btc_gdp_elsalvador)</span>
+<span id="cb126-9"><a href="#cb126-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(eg_model_sv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log_BTC_Price ~ log_GDP_ElSalvador, data = btc_gdp_elsalvador)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.0078 -1.1480  0.2053  0.8870  7.8818 
+
+Coefficients:
+                   Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        -100.985      7.553  -13.37   &lt;2e-16 ***
+log_GDP_ElSalvador   33.821      2.373   14.25   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.869 on 58 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.7778,    Adjusted R-squared:  0.774 
+F-statistic: 203.1 on 1 and 58 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb128"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Extract residuals and convert to time series</span></span>
+<span id="cb128-2"><a href="#cb128-2" aria-hidden="true" tabindex="-1"></a>resid_eg_sv <span class="ot">&lt;-</span> <span class="fu">residuals</span>(eg_model_sv)</span>
+<span id="cb128-3"><a href="#cb128-3" aria-hidden="true" tabindex="-1"></a>resid_ts_sv <span class="ot">&lt;-</span> <span class="fu">ts</span>(resid_eg_sv, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">2009</span>, <span class="dv">1</span>), <span class="at">frequency =</span> <span class="dv">4</span>)</span>
+<span id="cb128-4"><a href="#cb128-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-5"><a href="#cb128-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Detect structural breaks in residuals</span></span>
+<span id="cb128-6"><a href="#cb128-6" aria-hidden="true" tabindex="-1"></a>bp_sv <span class="ot">&lt;-</span> <span class="fu">breakpoints</span>(resid_ts_sv <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb128-7"><a href="#cb128-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bp_sv)  <span class="co"># Shows optimal breaks &amp; BIC</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Optimal (m+1)-segment partition: 
+
+Call:
+breakpoints.formula(formula = resid_ts_sv ~ 1)
+
+Breakpoints at observation number:
+                      
+m = 1   12            
+m = 2   13          50
+m = 3   12       41 50
+m = 4   13 22    41 50
+m = 5   13 22 31 41 50
+
+Corresponding to breakdates:
+                                               
+m = 1   2011(4)                                
+m = 2   2012(1)                         2021(2)
+m = 3   2011(4)                 2019(1) 2021(2)
+m = 4   2012(1) 2014(2)         2019(1) 2021(2)
+m = 5   2012(1) 2014(2) 2016(3) 2019(1) 2021(2)
+
+Fit:
+                                             
+m   0      1      2      3      4      5     
+RSS 202.59 142.28  96.68  85.92  83.92  82.35
+BIC 251.47 238.46 223.46 224.57 231.35 238.40</code></pre>
+</div>
+</div>
+<p>Final Cointegration Equation (El Salvador case)</p>
+<p>log(BTCt​)=−100.985+33.821⋅log(GDPElSalvador,t​)+εt</p>
+<blockquote class="blockquote">
+<p>A <strong>1% increase in El Salvador’s GDP</strong> is associated with approximately a <strong>33.82% increase in Bitcoin price</strong> in the long run, assuming cointegration holds.</p>
+<ul>
+<li><p>You have <strong>high R² (0.7778)</strong>, and <strong>both coefficients are highly significant</strong>.</p>
+<p>After testing the <strong>residuals for stationarity</strong> (ADF), you confirmed:</p>
+<p><strong>Residuals are stationary</strong> ⇒ ✅ You have <strong>cointegration</strong> between BTC and GDP of El Salvador (this step is checked later)</p></li>
+</ul>
+</blockquote>
+<p>​</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb130"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Visualize breakpoints</span></span>
+<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(resid_ts_sv, <span class="at">main =</span> <span class="st">"BTC ~ El Salvador GDP Residuals with Breakpoints"</span>)</span>
+<span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">fitted</span>(bp_sv), <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb130-4"><a href="#cb130-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">time</span>(resid_ts_sv)[bp_sv<span class="sc">$</span>breakpoints], <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="macro_final_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Create dummy variables for selected break dates</span></span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Based on your summary: breaks at 2012 Q1 (obs 13) and 2021 Q2 (obs 50)</span></span>
+<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a>btc_gdp_elsalvador<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.yearqtr</span>(btc_gdp_elsalvador<span class="sc">$</span>Date)</span>
+<span id="cb131-4"><a href="#cb131-4" aria-hidden="true" tabindex="-1"></a>btc_gdp_elsalvador<span class="sc">$</span>Break_D1 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(btc_gdp_elsalvador<span class="sc">$</span>Date <span class="sc">&gt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2012 Q1"</span>), <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb131-5"><a href="#cb131-5" aria-hidden="true" tabindex="-1"></a>btc_gdp_elsalvador<span class="sc">$</span>Break_D2 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(btc_gdp_elsalvador<span class="sc">$</span>Date <span class="sc">&gt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2021 Q2"</span>), <span class="dv">1</span>, <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb132"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a>btc_gdp_elsalvador <span class="sc">%&gt;%</span></span>
+<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Date <span class="sc">&gt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2011 Q4"</span>) <span class="sc">&amp;</span> Date <span class="sc">&lt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2012 Q2"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Date, Break_D1, Break_D2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  Date      Break_D1 Break_D2
+  &lt;yearqtr&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1 2011 Q4          0        0
+2 2012 Q1          1        0
+3 2012 Q2          1        0</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb134"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a>btc_gdp_elsalvador <span class="sc">%&gt;%</span></span>
+<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Date <span class="sc">&gt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2021 Q1"</span>) <span class="sc">&amp;</span> Date <span class="sc">&lt;=</span> <span class="fu">as.yearqtr</span>(<span class="st">"2021 Q3"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Date, Break_D1, Break_D2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  Date      Break_D1 Break_D2
+  &lt;yearqtr&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+1 2021 Q1          1        0
+2 2021 Q2          1        1
+3 2021 Q3          1        1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-estimate cointegration including structural break dummy</span></span>
+<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a>eg_model_sv_adj <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_BTC_Price <span class="sc">~</span> log_GDP_ElSalvador <span class="sc">+</span> Break_D1, <span class="at">data =</span> btc_gdp_elsalvador)</span>
+<span id="cb136-3"><a href="#cb136-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(eg_model_sv_adj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log_BTC_Price ~ log_GDP_ElSalvador + Break_D1, data = btc_gdp_elsalvador)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.8993 -0.8129 -0.3048  0.6937  6.0060 
+
+Coefficients:
+                   Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        -79.5075     6.9408 -11.455  &lt; 2e-16 ***
+log_GDP_ElSalvador  25.9484     2.2825  11.369 2.78e-16 ***
+Break_D1             4.1123     0.6826   6.025 1.31e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.474 on 57 degrees of freedom
+  (1 observation deleted due to missingness)
+Multiple R-squared:  0.8643,    Adjusted R-squared:  0.8595 
+F-statistic: 181.5 on 2 and 57 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb138"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb138-1"><a href="#cb138-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract adjusted residuals</span></span>
+<span id="cb138-2"><a href="#cb138-2" aria-hidden="true" tabindex="-1"></a>resid_adj_sv <span class="ot">&lt;-</span> <span class="fu">residuals</span>(eg_model_sv_adj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(urca)</span>
+<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ADF test on residuals (Engle-Granger second step)</span></span>
+<span id="cb139-4"><a href="#cb139-4" aria-hidden="true" tabindex="-1"></a>adf_test_sv <span class="ot">&lt;-</span> <span class="fu">ur.df</span>(resid_adj_sv, <span class="at">type =</span> <span class="st">"none"</span>, <span class="at">selectlags =</span> <span class="st">"AIC"</span>)</span>
+<span id="cb139-5"><a href="#cb139-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adf_test_sv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+############################################### 
+# Augmented Dickey-Fuller Test Unit Root Test # 
+############################################### 
+
+Test regression none 
+
+
+Call:
+lm(formula = z.diff ~ z.lag.1 - 1 + z.diff.lag)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.5868 -0.4842 -0.1336  0.3410  5.5478 
+
+Coefficients:
+           Estimate Std. Error t value Pr(&gt;|t|)    
+z.lag.1     -0.4406     0.1162  -3.791 0.000369 ***
+z.diff.lag   0.1364     0.1316   1.036 0.304433    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.147 on 56 degrees of freedom
+Multiple R-squared:  0.209, Adjusted R-squared:  0.1807 
+F-statistic: 7.397 on 2 and 56 DF,  p-value: 0.001411
+
+
+Value of test-statistic is: -3.7913 
+
+Critical values for test statistics: 
+     1pct  5pct 10pct
+tau1 -2.6 -1.95 -1.61</code></pre>
+</div>
+</div>
+<p>The residuals from the Engle-Granger regression (with structural break dummy) are <strong>stationary</strong>, which confirms a <strong>long-run cointegration relationship</strong></p>
+<p>Granger causality</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare again the VAR-compatible dataset</span></span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a>granger_data_sv <span class="ot">&lt;-</span> btc_gdp_elsalvador <span class="sc">%&gt;%</span></span>
+<span id="cb141-3"><a href="#cb141-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(log_BTC_Price, log_GDP_ElSalvador) <span class="sc">%&gt;%</span></span>
+<span id="cb141-4"><a href="#cb141-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
+<span id="cb141-5"><a href="#cb141-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-6"><a href="#cb141-6" aria-hidden="true" tabindex="-1"></a>optimal_lag_vecm <span class="ot">&lt;-</span> <span class="fu">VARselect</span>(combined_data[, <span class="fu">c</span>(<span class="st">"log_BTC_Price"</span>, <span class="st">"log_SP500"</span>, <span class="st">"log_Real_GDP"</span>, <span class="st">"log_M2"</span>)], <span class="at">lag.max =</span> <span class="dv">10</span>, <span class="at">type =</span> <span class="st">"const"</span>)<span class="sc">$</span>selection[<span class="st">"AIC(n)"</span>]</span>
+<span id="cb141-7"><a href="#cb141-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-8"><a href="#cb141-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Granger causality tests</span></span>
+<span id="cb141-9"><a href="#cb141-9" aria-hidden="true" tabindex="-1"></a>granger_btc_causes_gdp <span class="ot">&lt;-</span> <span class="fu">grangertest</span>(log_GDP_ElSalvador <span class="sc">~</span> log_BTC_Price,</span>
+<span id="cb141-10"><a href="#cb141-10" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">order =</span> optimal_lag_vecm, <span class="at">data =</span> granger_data_sv)</span>
+<span id="cb141-11"><a href="#cb141-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-12"><a href="#cb141-12" aria-hidden="true" tabindex="-1"></a>granger_gdp_causes_btc <span class="ot">&lt;-</span> <span class="fu">grangertest</span>(log_BTC_Price <span class="sc">~</span> log_GDP_ElSalvador,</span>
+<span id="cb141-13"><a href="#cb141-13" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">order =</span> optimal_lag_vecm, <span class="at">data =</span> granger_data_sv)</span>
+<span id="cb141-14"><a href="#cb141-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-15"><a href="#cb141-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Print results</span></span>
+<span id="cb141-16"><a href="#cb141-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Granger Causality Results (El Salvador):</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Granger Causality Results (El Salvador):</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"BTC ➡ GDP: F ="</span>, <span class="fu">round</span>(granger_btc_causes_gdp<span class="sc">$</span>F[<span class="dv">2</span>], <span class="dv">3</span>), <span class="st">", p ="</span>, <span class="fu">round</span>(granger_btc_causes_gdp<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>BTC ➡ GDP: F = 0.727 , p = 0.6936 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"GDP ➡ BTC: F ="</span>, <span class="fu">round</span>(granger_gdp_causes_btc<span class="sc">$</span>F[<span class="dv">2</span>], <span class="dv">3</span>), <span class="st">", p ="</span>, <span class="fu">round</span>(granger_gdp_causes_btc<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;F)</span><span class="st">`</span>[<span class="dv">2</span>], <span class="dv">4</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>GDP ➡ BTC: F = 0.926 , p = 0.5238 </code></pre>
+</div>
+</div>
+<p>Past values of Bitcoin contain useful information to explain or anticipate changes in El Salvador’s GDP in the short run.</p>
+<p>Past values of El Salvador’s GDP do <strong>not significantly help</strong> explain Bitcoin price dynamics.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
